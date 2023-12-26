@@ -1,7 +1,7 @@
 module.exports = {
 
   // auth
-  join: `INSERT INTO tb_user (user_id, user_email, user_nick, user_pw, user_img, user_tp, user_mobile, user_zipcode, user_adr1, user_adr2) VALUES(?,?,?,?,?,?,?,?,?,?)`,
+  join: `INSERT INTO tb_user (user_id, user_email, user_nick, user_pw, user_mobile, user_zipcode, user_adr1, user_adr2) VALUES(?,?,?,?,?,?,?,?,?)`,
 
   id_check: `SELECT * FROM tb_user WHERE user_id = ?`,
   get_user_no: `SELECT user_no FROM tb_user WHERE user_id = ?`,
