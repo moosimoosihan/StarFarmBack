@@ -102,6 +102,7 @@ router.post('/join_process', function (request, response) {
     const encryptedPW = bcrypt.hashSync(user.user_pw, 10); // 비밀번호 암호화
 
     db.query(sql.id_check, [user.user_id], function (error, results, fields) {
+        console.log(results.length);
         if (results.length <= 0) {
             db.query(sql.join, [user.user_id, user.user_nick, user.user_email, encryptedPW, user.user_mobile, user.user_zipcode, user.user_adr1, user.user_adr2], function (error, data) {
                 if (error) {
