@@ -34,34 +34,37 @@ router.post('/add_goods', function (request, response) {
                             message: 'goods_add_fail'
                         })
                     }
+                    // filtter로 빈 값 제거
+                    goods.goods_img = goods.goods_img.filter((item) => {
+                        return item != '';
+                    });
+                    
                     try {
-                        const pastDir0 = `${__dirname}` + `/../uploads/` + goods.goods_img
-                        const pastDir1 = `${__dirname}` + `/../uploads/` + goods.goods_detail_img
-
-                        const newDir = `${__dirname}` + `/../uploads/uploadGoods/`;
-                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
-
-                        const extension = goods.goods_img.substring(goods.goods_img.lastIndexOf('.'))
-
                         // 등록 상품의 번호 불러오기
                         db.query(sql.get_goods_no, [goods.goods_nm], function (error, results, fields) {
                             const filename = results[0].goods_no
 
-                            // 이미지 폴더 및 이름(상품번호-타입) 변경
-                            // 타입 0: 메인 이미지 1: 상세 이미지
-                            fs.rename(pastDir0, newDir + filename + '-0' + extension, (err) => {
-                                if (err) {
-                                    throw err;
-                                }
-                            });
-                            fs.rename(pastDir1, newDir + filename + '-1' + extension, (err) => {
-                                if (err) {
-                                    throw err;
-                                }
-                            });
+                            
+                            
+                            const imgList = [];
+                            for(let i = 0; i < goods.goods_img.length; i++) {
+                                const pastDir = `${__dirname}` + `/../uploads/` + goods.goods_img[i];
+                                const newDir = `${__dirname}` + `/../uploads/uploadGoods/${filename}`;
+                                const extension = goods.goods_img[i].substring(goods.goods_img[i].lastIndexOf('.'))
+                                
+                                if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+
+                                fs.rename(pastDir, newDir+ '/' + i + extension, (err) => {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                });
+                                imgList.push(i + extension);
+                            }
+                            const img = imgList.join(',');
 
                             // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
-                            db.query(sql.add_image, [filename + '-0' + extension, filename + '-1' + extension, filename], function (error, results, fields) {
+                            db.query(sql.add_image, [img, filename], function (error, results, fields) {
                                 if (error) {
                                     throw error;
                                 }
@@ -71,9 +74,7 @@ router.post('/add_goods', function (request, response) {
                                     })
                                 }
                             })
-
-                        })
-
+                        })   
                     }
                     catch (err) {
                         // 이미지 등록 실패

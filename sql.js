@@ -32,7 +32,7 @@ module.exports = {
 
   // goods
   goods_add: `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, goods_timer, user_no) VALUES (?,?,?,?,?,?,?,?,?)`,
-  add_image: `UPDATE tb_goods SET goods_img = ?, goods_detail_img = ? WHERE goods_no = ?`,
+  add_image: `UPDATE tb_goods SET goods_img = ? WHERE goods_no = ?`,
   goods_check: `SELECT * FROM tb_goods WHERE goods_nm = ?`,
   get_goods_no: `SELECT goods_no FROM tb_goods WHERE goods_nm = ?`,
   delete_goods: `DELETE FROM tb_goods WHERE goods_nm = ?`,
