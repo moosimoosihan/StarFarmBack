@@ -274,18 +274,68 @@ router.get('/goodsSearch/:keyword/:sortCase', function (request, response, next)
     });
 });
 
-// 상품 상세페이지 
-router.get('/goodsDetail/:goodsno', function (request, response, next) {
-    const goodsno = request.params.goodsno;
+// 상품 상세정보
+router.get('/goodsInfo/:id', function (request, response, next) {
+    const goodsno = request.params.id;
 
-    db.query(sql.goods_detail, [goodsno], function (error, results, fields) {
+    db.query(sql.get_goods_info, [goodsno], function (error, results, fields) {
         if (error) {
             console.error(error);
-            return response.status(500).json({ error: '상품디테일에러' });
+            return response.status(500).json({ error: '상품 상세정보 에러' });
         }
         response.json(results);
     });
 });
+
+// 상품 상세 유저정보
+router.get('/goodsInfoUser/:id', function (request, response, next) {
+    const goodsno = request.params.id;
+
+    db.query(sql.get_goods_info_user, [goodsno], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '상품상세 유저정보 에러'});
+        }
+        response.json(results);
+    })
+});
+
+//상품 최고 입찰가 및 낙찰가
+router.get('/goodsSuccBid/:id', function (request, response, next) {
+    const goodsno = request.params.id;
+
+    db.query(sql.goods_succ_bid, [goodsno], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '상품 최고입찰가 낙찰가 에러' });
+        }
+        response.json(results);
+    })
+});
+
+// 상품 경매 내역
+router.get('/goodsBidList/:id', function (request, response, next) {
+    const goodsno = request.params.id;
+
+    db.query(sql.goods_auction, [goodsno], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '상품 경매 내역 에러' });
+        }
+        response.json(results);
+    })
+});
+
+// 상품 입찰
+// router.post('/goodsBidding/:id', function (request, response) {
+//     const goodsno = request.params.id;
+
+//     try {
+//         db.query(sql.goods_bidding, [goods.bid_amount, goods.goods_no, goods.user_no], function (error, results, fields) {
+            
+//         })
+//     }
+// });
 
 // 상품 결제 
 router.post('/orderPayment', function (request, response, next) {

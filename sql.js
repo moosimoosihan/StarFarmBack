@@ -58,19 +58,20 @@ module.exports = {
   get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price
                        FROM tb_goods
                        WHERE goods_no = ?`,
-  get_goods_info_user: `SELECT g.goods_no, g.user_no, user_img, u.user_nick, u.user_fr, u.user_addr1
-                        FROM tb_user u, tb_goods g
-                        WHERE u.user_no = g.user_no`,
+  get_goods_info_user: `SELECT g.goods_no, g.user_no, user_img, u.user_nick, u.user_fr, u.user_adr1
+                       FROM tb_user u, tb_goods g
+                       WHERE u.user_no = g.user_no`,
 
-  //경매 입찰
-  goods_auction: `SELECT g.goods_no, b.bid_no, b.bid_amount, b.user_no
-                  FROM tb_goods g, tb_bid b
-                  WHERE g.goods_no = ? and g.goods_no = b.goods_no`,
-  goods_bid: `INSERT INTO tb_bid (bid_amount, goods_no, user_no) value (?,?,?)`,
-  goods_succ_bid: `SELECT b.user_no, b.goods_no, max(b.bid_amount)
-                  FROM tb_bid b, tb_goods g
-                  WHERE g.goods_state = 1 and b.goods_no = 3
-                  limit 1;`,
+ //경매 입찰
+ goods_auction: `SELECT g.goods_no, b.bid_no, b.bid_amount, b.user_no, u.user_nick
+                 FROM tb_goods g, tb_bid b, tb_user u
+                 WHERE g.goods_no = ? and g.goods_no = b.goods_no and b.user_no = u.user_no
+                 ORDER BY bid_create_dt asc`,
+ goods_bidding: `INSERT INTO tb_bid (bid_amount, goods_no, user_no) value (?,?,?)`,
+ goods_succ_bid: `SELECT b.user_no, b.goods_no, max(b.bid_amount) as succ_bid
+                 FROM tb_bid b, tb_goods g
+                 WHERE b.goods_no = ?
+                 limit 1`,
   goods_succ_price: `UPDATE tb_goods SET goods_succ_price = ? WHERE goods_no = ?`,
 //-------------------------------------------------------------------------------------------
 /*  order_payment: `INSERT INTO tb_order
