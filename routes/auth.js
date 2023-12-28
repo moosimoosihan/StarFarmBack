@@ -81,7 +81,7 @@ router.post('/naverlogin', function (request, response) {
             })
         } else {
             // DB에 계정 정보 입력 
-            db.query(sql.naverlogin, [naverlogin.email, naverlogin.id, naverlogin.nickname], function (error, result) {
+            db.query(sql.naverlogin, [naverlogin.email, naverlogin.id, naverlogin.nickname, null], function (error, result) {
                 if (error) {
                     console.error(error);
                     return response.status(500).json({ error: 'error' });
