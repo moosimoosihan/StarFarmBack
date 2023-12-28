@@ -35,10 +35,10 @@ router.post('/add_goods', function (request, response) {
                         })
                     }
                     try {
-                        const pastDir0 = `${__dirname}` + `../../uploads/` + goods.goods_img
-                        const pastDir1 = `${__dirname}` + `../../uploads/` + goods.goods_detail_img
+                        const pastDir0 = `${__dirname}` + `/../uploads/` + goods.goods_img
+                        const pastDir1 = `${__dirname}` + `/../uploads/` + goods.goods_detail_img
 
-                        const newDir = `${__dirname}` + `../../uploads/uploadGoods/`;
+                        const newDir = `${__dirname}` + `/../uploads/uploadGoods/`;
                         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
 
                         const extension = goods.goods_img.substring(goods.goods_img.lastIndexOf('.'))
