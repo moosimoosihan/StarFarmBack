@@ -31,11 +31,11 @@ module.exports = {
                             WHERE ORDER_TRADE_NO IN (?)`, */
 
   // goods
-  goods_add: `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no) VALUES (?,?,?,?,?,?,?,?,?)`,
-  add_image: `UPDATE tb_goods SET goods_img = ?, goods_content = ? WHERE goods_no = ?`,
+  goods_add: `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, goods_timer, user_no) VALUES (?,?,?,?,?,?,?,?,?)`,
+  add_image: `UPDATE tb_goods SET goods_img = ?, goods_detail_img = ? WHERE goods_no = ?`,
   goods_check: `SELECT * FROM tb_goods WHERE goods_nm = ?`,
   get_goods_no: `SELECT goods_no FROM tb_goods WHERE goods_nm = ?`,
-  delete_goods: `DELETE FROM tb_goods WHERE goods_no = ?`,
+  delete_goods: `DELETE FROM tb_goods WHERE goods_nm = ?`,
   delete_goods_2: `DELETE FROM tb_goods WHERE goods_nm = ?`,
   get_img_nm: `SELECT goods_img, goods_content FROM tb_goods WHERE goods_no = ?`,
   goods_list: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer

@@ -5,7 +5,7 @@ const sql = require('../sql.js');
 const fs = require('fs');
 
 const multer = require('multer');
-const path = require("path");
+const path = require('path');
 
 // 메인 상품 리스트 
 router.get('/maingoods', function (request, response, next) {
@@ -28,18 +28,18 @@ router.post('/add_goods', function (request, response) {
             if (results.length <= 0) {
 
                 // 이미지를 제외한 굿즈 정보 먼저 입력
-                db.query(sql.goods_add, [goods.goods_nm, goods.goods_category, goods.goods_price, goods.goods_hashtag1, goods.goods_hashtag2, goods.goods_hashtag3, goods.goods_cnt], function (error, results, fields) {
+                db.query(sql.goods_add, [goods.goods_category, goods.goods_category_detail, goods.goods_nm, goods.goods_content, goods.goods_start_price, goods.goods_trade, goods.goods_deliv_price, goods.goods_timer, goods.user_no], function (error, results, fields) {
                     if (error) {
                         return response.status(200).json({
-                            message: 'fail'
+                            message: 'goods_add_fail'
                         })
                     }
                     try {
                         const pastDir0 = `${__dirname}` + `../../uploads/` + goods.goods_img
-                        const pastDir1 = `${__dirname}` + `../../uploads/` + goods.goods_content
+                        const pastDir1 = `${__dirname}` + `../../uploads/` + goods.goods_detail_img
 
                         const newDir = `${__dirname}` + `../../uploads/uploadGoods/`;
-                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
+                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
 
                         const extension = goods.goods_img.substring(goods.goods_img.lastIndexOf('.'))
 
@@ -79,8 +79,9 @@ router.post('/add_goods', function (request, response) {
                         // 이미지 등록 실패
                         // -> DB에서 미리 등록한 상품도 다시 제거하기
                         db.query(sql.delete_goods, [goods.goods_nm], function (error, results, fields) {
+                            console.log(err);
                             return response.status(200).json({
-                                message: 'fail'
+                                message: 'goodsimage_add_fail'
                             })
                         })
                     }
@@ -216,11 +217,11 @@ router.post('/admin/delete_goods', function (request, response, next) {
         else {
             try {
                 const goods_img = results[0].goods_img;
-                const goods_content = results[0].goods_content;
+                const goods_detail_img = results[0].goods_detail_img;
 
                 // 이미지 제거
-                fs.unlinkSync(`${__dirname}../../uploads/uploadGoods/${goods_img}`);
-                fs.unlinkSync(`${__dirname}../../uploads/uploadGoods/${goods_content}`);
+                fs.unlinkSync(`${__dirname}../uploads/uploadGoods/${goods_img}`);
+                fs.unlinkSync(`${__dirname}../uploads/uploadGoods/${goods_detail_img}`);
 
                 // 상품 제거
                 db.query(sql.delete_goods_2, [goods_no], function (error, results, fields) {
@@ -645,8 +646,8 @@ router.post('/write_review', function (request, response, next) {
                 }
                 const filename = results[0].review_no;
 
-                const pastDir = `${__dirname}` + `../../uploads/` + review.review_img;
-                const newDir = `${__dirname}` + `../../uploads/uploadReview/`;
+                const pastDir = `${__dirname}` + `../uploads/` + review.review_img;
+                const newDir = `${__dirname}` + `../uploads/uploadReview/`;
 
                 const extension = review.review_img.substring(review.review_img.lastIndexOf('.'))
 
