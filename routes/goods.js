@@ -325,16 +325,22 @@ router.get('/goodsBidList/:id', function (request, response, next) {
     })
 });
 
-// 상품 입찰
-// router.post('/goodsBidding/:id', function (request, response) {
-//     const goodsno = request.params.id;
+//상품 입찰
+router.post('/goodsBidding/:id', function (request, response) {
+    const goods = request.body;
 
-//     try {
-//         db.query(sql.goods_bidding, [goods.bid_amount, goods.goods_no, goods.user_no], function (error, results, fields) {
-            
-//         })
-//     }
-// });
+    db.query(sql.goods_bidding, [goods.bid_amount, goods.goods_no, goods.user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '상품 입찰 에러' });
+        }
+        else {
+            return response.status(200).json({
+                message: 'bidding_complete'
+            })
+        }
+    })
+});
 
 // 상품 결제 
 router.post('/orderPayment', function (request, response, next) {
