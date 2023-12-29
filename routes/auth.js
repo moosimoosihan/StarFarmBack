@@ -173,7 +173,7 @@ router.post('/join_process', function (request, response) {
         if (results.length <= 0) {
             db.query(sql.phone_check, [user.user_mobile], function (error, results, fields) {
                 if(results.length <= 0) {
-                    db.query(sql.join, [user.user_id, user.user_nick, user.user_email, encryptedPW, user.user_mobile, user.user_zipcode, user.user_adr1, user.user_adr2], function (error, data) {
+                    db.query(sql.join, [user.user_id, user.user_email, user.user_nick, encryptedPW, user.user_mobile, user.user_zipcode, user.user_adr1, user.user_adr2], function (error, data) {
                         if (error) {
                             return response.status(500).json({
                                 message: 'DB_error'

@@ -57,9 +57,7 @@ module.exports = {
   goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state
                        FROM tb_goods
                        WHERE goods_nm LIKE ?`,
-  get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price
-                       FROM tb_goods
-                       WHERE goods_no = ?`,
+  get_goods_info: `SELECT * FROM tb_goods WHERE goods_no = ?`,
   get_goods_info_user: `SELECT g.goods_no, g.user_no, user_img, u.user_nick, u.user_fr, u.user_adr1
                        FROM tb_user u, tb_goods g
                        WHERE u.user_no = g.user_no`,
