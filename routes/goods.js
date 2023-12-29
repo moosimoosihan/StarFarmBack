@@ -44,8 +44,6 @@ router.post('/add_goods', function (request, response) {
                         db.query(sql.get_goods_no, [goods.goods_nm], function (error, results, fields) {
                             const filename = results[0].goods_no
 
-                            
-                            
                             const imgList = [];
                             for(let i = 0; i < goods.goods_img.length; i++) {
                                 const pastDir = `${__dirname}` + `/../uploads/` + goods.goods_img[i];

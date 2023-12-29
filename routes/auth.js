@@ -3,6 +3,10 @@ const router = express.Router();
 const db = require('../db.js');
 const sql = require('../sql.js');
 const bcrypt = require('bcrypt');  
+const fs = require('fs');
+
+const multer = require('multer');
+const path = require('path');
 
 // 카카오 회원가입
 router.post('/kakaoJoinProcess', function (request, response) {
@@ -29,6 +33,27 @@ router.post('/kakaoJoinProcess', function (request, response) {
             })
         }
     })
+})
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, cb) {
+            cb(null, 'uploads/');
+        },
+        filename(req, file, cb) {
+            cb(null, file.originalname);
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+// 이미지 등록 
+router.post('/upload_img', upload.single('img'), (request, response) => {
+    setTimeout(() => {
+        return response.status(200).json({
+            message: 'success'
+        })
+    }, 2000);
 })
 
 // 카카오 로그인
@@ -102,7 +127,6 @@ router.post('/join_process', function (request, response) {
     const encryptedPW = bcrypt.hashSync(user.user_pw, 10); // 비밀번호 암호화
 
     db.query(sql.id_check, [user.user_id], function (error, results, fields) {
-        console.log(results.length);
         if (results.length <= 0) {
             db.query(sql.join, [user.user_id, user.user_nick, user.user_email, encryptedPW, user.user_mobile, user.user_zipcode, user.user_adr1, user.user_adr2], function (error, data) {
                 if (error) {
@@ -110,9 +134,46 @@ router.post('/join_process', function (request, response) {
                         message: 'DB_error'
                     })
                 }
-                return response.status(200).json({
-                    message: 'join_complete'
-                });
+                try {
+                    // 유저 번호 불러오기
+                    db.query(sql.get_user_no, [user.user_id], function (error, results, fields) {
+                        const filename = results[0].user_no
+
+                        const pastDir = `${__dirname}` + `/../uploads/` + user.user_img;
+                        const newDir = `${__dirname}` + `/../uploads/userImg/${filename}`;
+                        const extension = user.user_img.substring(user.user_img.lastIndexOf('.'))
+                        
+                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+
+                        fs.rename(pastDir, newDir+ '/' + filename + extension, (err) => {
+                            if (err) {
+                                throw err;
+                            }
+                        });
+
+                        // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
+                        db.query(sql.add_user_img, [filename+extension, filename], function (error, results, fields) {
+                            if (error) {
+                                throw error;
+                            }
+                            else {
+                                return response.status(200).json({
+                                    message: 'join_complete'
+                                })
+                            }
+                        })
+                    })   
+                }
+                catch (err) {
+                    // 이미지 등록 실패
+                    // -> DB에서 미리 등록한 상품도 다시 제거하기
+                    db.query(sql.delete_goods, [goods.goods_nm], function (error, results, fields) {
+                        console.log(err);
+                        return response.status(200).json({
+                            message: 'image_add_fail'
+                        })
+                    })
+                }
             })
         }
         else {
