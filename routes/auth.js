@@ -179,45 +179,51 @@ router.post('/join_process', function (request, response) {
                                 message: 'DB_error'
                             })
                         }
-                        try {
-                            // 유저 번호 불러오기
-                            db.query(sql.get_user_no, [user.user_id], function (error, results, fields) {
-                                const filename = results[0].user_no
-
-                                const pastDir = `${__dirname}` + `/../uploads/` + user.user_img;
-                                const newDir = `${__dirname}` + `/../uploads/userImg/${filename}`;
-                                const extension = user.user_img.substring(user.user_img.lastIndexOf('.'))
-                                
-                                if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
-
-                                fs.rename(pastDir, newDir+ '/' + filename + extension, (err) => {
-                                    if (err) {
-                                        throw err;
-                                    }
-                                });
-
-                                // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
-                                db.query(sql.add_user_img, [filename+extension, filename], function (error, results, fields) {
-                                    if (error) {
-                                        throw error;
-                                    }
-                                    else {
-                                        return response.status(200).json({
-                                            message: 'join_complete'
-                                        })
-                                    }
-                                })
-                            })   
-                        }
-                        catch (err) {
-                            // 이미지 등록 실패
-                            // -> DB에서 미리 등록한 상품도 다시 제거하기
-                            db.query(sql.delete_goods, [goods.goods_nm], function (error, results, fields) {
-                                console.log(err);
-                                return response.status(200).json({
-                                    message: 'image_add_fail'
-                                })
+                        if(user.user_img == '') {
+                            return response.status(200).json({
+                                message: 'join_complete'
                             })
+                        } else {
+                            try {
+                                // 유저 번호 불러오기
+                                db.query(sql.get_user_no, [user.user_id], function (error, results, fields) {
+                                    const filename = results[0].user_no
+
+                                    const pastDir = `${__dirname}` + `/../uploads/` + user.user_img;
+                                    const newDir = `${__dirname}` + `/../uploads/userImg/${filename}`;
+                                    const extension = user.user_img.substring(user.user_img.lastIndexOf('.'))
+                                    
+                                    if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+
+                                    fs.rename(pastDir, newDir+ '/' + filename + extension, (err) => {
+                                        if (err) {
+                                            throw err;
+                                        }
+                                    });
+
+                                    // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
+                                    db.query(sql.add_user_img, [filename+extension, filename], function (error, results, fields) {
+                                        if (error) {
+                                            throw error;
+                                        }
+                                        else {
+                                            return response.status(200).json({
+                                                message: 'join_complete'
+                                            })
+                                        }
+                                    })
+                                })   
+                            }
+                            catch (err) {
+                                // 이미지 등록 실패
+                                // -> DB에서 미리 등록한 상품도 다시 제거하기
+                                db.query(sql.delete_goods, [goods.goods_nm], function (error, results, fields) {
+                                    console.log(err);
+                                    return response.status(200).json({
+                                        message: 'image_add_fail'
+                                    })
+                                })
+                            }
                         }
                     })
                 }
