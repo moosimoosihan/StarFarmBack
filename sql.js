@@ -4,6 +4,7 @@ module.exports = {
   join: `INSERT INTO tb_user (user_id, user_email, user_nick, user_pw, user_mobile, user_zipcode, user_adr1, user_adr2) VALUES(?,?,?,?,?,?,?,?)`,
 
   id_check: `SELECT * FROM tb_user WHERE user_id = ?`,
+  mobile_check: `SELECT * FROM tb_user WHERE user_mobile = ?`,
   get_user_no: `SELECT user_no FROM tb_user WHERE user_id = ?`,
   login: `SELECT user_pw FROM tb_user WHERE user_id = ?`,
   add_user_img: `UPDATE tb_user SET user_img = ? WHERE user_no = ?`,
