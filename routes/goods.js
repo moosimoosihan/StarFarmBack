@@ -9,7 +9,7 @@ const path = require('path');
 
 // 메인 상품 리스트 
 router.get('/maingoods', function (request, response, next) {
-    db.query(sql.goods_main, function (error, results, fields) {
+    db.query(sql.goods_list, function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '에러' });
