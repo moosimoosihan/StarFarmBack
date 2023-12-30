@@ -12,12 +12,12 @@ app.use(express.urlencoded({ extended: true }));
 
 const authRouter = require('./routes/auth');
 const goodsRouter = require('./routes/goods');
-//const mypageRouter = require('./routes/mypage');
+const mypageRouter = require('./routes/mypage');
 //const chatRouter = require('./routes/chat');
 
 app.use('/auth', authRouter);
 app.use('/goods', goodsRouter);
-//app.use('/mypage', mypageRouter);
+app.use('/mypage', mypageRouter);
 //app.use('/chat', chatRouter);
 
 app.listen(3000, function() {
