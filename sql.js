@@ -93,7 +93,7 @@ module.exports = {
                   SET REVIEW_CHECK = 1
                   WHERE ORDER_TRADE_NO = ?`, */
 
-  // 유저 정보
+  // 마이페이지
   user_get_review: `SELECT * FROM tb_review`,
   get_user_info: `SELECT user_no, user_id, user_nick, user_email, user_img, user_mobile, user_zipcode, user_adr1, user_adr2, user_fr, user_social_tp
                   FROM tb_user
@@ -101,6 +101,10 @@ module.exports = {
   mypage_update: `UPDATE tb_user 
                   SET user_nick = ?, user_pw = ?, user_mobile =?, user_zipcode =?, user_adr1 =?, user_adr2 =?
                   WHERE user_no = ?`,
+  mypage_orderList: `select g.goods_no, g.goods_nm, g.goods_start_price, g.goods_img, max(b.bid_amount), b.goods_no, b.user_no, g.goods_state, g.goods_timer
+                    from tb_goods g, tb_bid b
+                    where g.goods_no = b.goods_no and b.user_no = ?
+                    group by g.goods_no`,
 
 
   //pass
