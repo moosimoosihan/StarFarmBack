@@ -23,77 +23,64 @@ router.post('/add_goods', function (request, response) {
     const goods = request.body;
 
     try {
-        // 동일 상품 존재하는지 조회
-        db.query(sql.goods_check, [goods.goods_nm], function (error, results, fields) {
-            if (results.length <= 0) {
-
-                // 이미지를 제외한 굿즈 정보 먼저 입력
-                db.query(sql.goods_add, [goods.goods_category, goods.goods_category_detail, goods.goods_nm, goods.goods_content, goods.goods_start_price, goods.goods_trade, goods.goods_deliv_price, goods.goods_timer, goods.user_no], function (error, results, fields) {
-                    if (error) {
-                        return response.status(200).json({
-                            message: 'goods_add_fail'
-                        })
-                    }
-                    // filtter로 빈 값 제거
-                    goods.goods_img = goods.goods_img.filter((item) => {
-                        return item != '';
-                    });
-                    
-                    try {
-                        // 등록 상품의 번호 불러오기
-                        db.query(sql.get_goods_no, [goods.goods_nm], function (error, results, fields) {
-                            const filename = results[0].goods_no
-
-                            const imgList = [];
-                            for(let i = 0; i < goods.goods_img.length; i++) {
-                                const pastDir = `${__dirname}` + `/../uploads/` + goods.goods_img[i];
-                                const newDir = `${__dirname}` + `/../uploads/uploadGoods/${filename}`;
-                                const extension = goods.goods_img[i].substring(goods.goods_img[i].lastIndexOf('.'))
-                                
-                                if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
-
-                                fs.rename(pastDir, newDir+ '/' + i + extension, (err) => {
-                                    if (err) {
-                                        throw err;
-                                    }
-                                });
-                                imgList.push(i + extension);
-                            }
-                            const img = imgList.join(',');
-
-                            // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
-                            db.query(sql.add_image, [img, filename], function (error, results, fields) {
-                                if (error) {
-                                    throw error;
-                                }
-                                else {
-                                    return response.status(200).json({
-                                        message: 'add_complete'
-                                    })
-                                }
-                            })
-                        })   
-                    }
-                    catch (err) {
-                        // 이미지 등록 실패
-                        // -> DB에서 미리 등록한 상품도 다시 제거하기
-                        db.query(sql.delete_goods, [goods.goods_nm], function (error, results, fields) {
-                            console.log(err);
-                            return response.status(200).json({
-                                message: 'goodsimage_add_fail'
-                            })
-                        })
-                    }
-                })
-
-            }
-            else {
+        // 이미지를 제외한 굿즈 정보 먼저 입력
+        db.query(sql.goods_add, [goods.goods_category, goods.goods_category_detail, goods.goods_nm, goods.goods_content, goods.goods_start_price, goods.goods_trade, goods.goods_deliv_price, goods.goods_timer, goods.user_no], function (error, results, fields) {
+            if (error) {
                 return response.status(200).json({
-                    message: 'already_exist_goods'
+                    message: 'goods_add_fail'
+                })
+            }
+            // filtter로 빈 값 제거
+            goods.goods_img = goods.goods_img.filter((item) => {
+                return item != '';
+            });
+            
+            try {
+                // 등록 상품의 번호 불러오기
+                db.query(sql.get_goods_no, [goods.goods_nm], function (error, results, fields) {
+                    const filename = results[0].goods_no
+
+                    const imgList = [];
+                    for(let i = 0; i < goods.goods_img.length; i++) {
+                        const pastDir = `${__dirname}` + `/../uploads/` + goods.goods_img[i];
+                        const newDir = `${__dirname}` + `/../uploads/uploadGoods/${filename}`;
+                        const extension = goods.goods_img[i].substring(goods.goods_img[i].lastIndexOf('.'))
+                        
+                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+
+                        fs.rename(pastDir, newDir+ '/' + i + extension, (err) => {
+                            if (err) {
+                                throw err;
+                            }
+                        });
+                        imgList.push(i + extension);
+                    }
+                    const img = imgList.join(',');
+
+                    // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
+                    db.query(sql.add_image, [img, filename], function (error, results, fields) {
+                        if (error) {
+                            throw error;
+                        }
+                        else {
+                            return response.status(200).json({
+                                message: 'add_complete'
+                            })
+                        }
+                    })
+                })   
+            }
+            catch (err) {
+                // 이미지 등록 실패
+                // -> DB에서 미리 등록한 상품도 다시 제거하기
+                db.query(sql.delete_goods, [goods.goods_nm], function (error, results, fields) {
+                    console.log(err);
+                    return response.status(200).json({
+                        message: 'goodsimage_add_fail'
+                    })
                 })
             }
         })
-
     } catch {
         return response.status(200).json({
             message: 'DB_error'
@@ -205,25 +192,25 @@ router.post('/update_goods', function (request, response, next) {
 })
 
 // 상품 제거
-router.post('/admin/delete_goods', function (request, response, next) {
-    const goods_no = request.body.goods_no;
-
+router.post('/delete_goods/:goods_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+    console.log(goods_no);
     // 이미지 이름 불러오기
-    db.query(sql.get_img_nm, [goods_no], function (error, results, fields) {
-        if (error) {
-            return response.status(500).json({ error: 'goods_error' })
-        }
-        else {
+    // db.query(sql.get_img_nm, [goods_no], function (error, results, fields) {
+    //     if (error) {
+    //         return response.status(500).json({ error: 'goods_error' })
+    //     }
+        // else {
             try {
-                const goods_img = results[0].goods_img;
-                const goods_detail_img = results[0].goods_detail_img;
+                // const goods_img = results[0].goods_img;
+                // const goods_detail_img = results[0].goods_detail_img;
 
                 // 이미지 제거
-                fs.unlinkSync(`${__dirname}../uploads/uploadGoods/${goods_img}`);
-                fs.unlinkSync(`${__dirname}../uploads/uploadGoods/${goods_detail_img}`);
+                // fs.unlinkSync(`${__dirname}../uploads/uploadGoods/${goods_img}`);
+                // fs.unlinkSync(`${__dirname}../uploads/uploadGoods/${goods_detail_img}`);
 
                 // 상품 제거
-                db.query(sql.delete_goods_2, [goods_no], function (error, results, fields) {
+                db.query(sql.delete_goods, [goods_no], function (error, results, fields) {
                     if (error) {
                         return response.status(500).json({ error: 'goods_error' })
                     }
@@ -237,9 +224,9 @@ router.post('/admin/delete_goods', function (request, response, next) {
             catch (error) {
                 console.log("에러");
             }
-        }
-    })
-})
+        })
+    // })
+// })
 
 // Main_카테고리별 상품 리스트 
 router.get('/goodsCate/:category/:sortCase', function (request, response, next) {
@@ -603,7 +590,7 @@ router.post('/admin/updateStatus', function (request, response, next) {
 });
 
 // 찜 추가
-router.post('/likeInsert/:goodsno/:user_no', function (request, response, next) {
+router.post('/likeInsert/:user_no/:goodsno', function (request, response, next) {
     const user_no = request.params.user_no;
     const goods_no = request.params.goodsno;
 
@@ -629,7 +616,7 @@ router.post('/likeInsert/:goodsno/:user_no', function (request, response, next) 
 });
 
 // 찜 체크
-router.post('/likeCheck/:goodsno/:user_no', function (request, response, next) {
+router.post('/likeCheck/:user_no/:goodsno', function (request, response, next) {
     const user_no = request.params.user_no;
     const goods_no = request.params.goodsno;
 
@@ -638,6 +625,7 @@ router.post('/likeCheck/:goodsno/:user_no', function (request, response, next) {
     }
 
     db.query(sql.like_check, [user_no, goods_no], function (error, results, fields) {
+        console.log(results);
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '에러' });
@@ -661,7 +649,7 @@ router.post('/likeDelete/:goodsno/:user_no', function (request, response, next) 
             console.error(error);
             return response.status(500).json({ error: '에러' });
         }
-        return response.status(200).json({ message: 'complete' });
+        return response.status(200).json({ message: 'complete', isLiked: false });
     });
 });
 
