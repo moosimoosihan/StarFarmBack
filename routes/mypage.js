@@ -33,6 +33,46 @@ router.get('/mypage/:user_no', function (request, response, next) {
     });
 });
 
+// 판매 상품 리스트
+router.get('/salelist/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.mypage_saleList, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '회원에러' });
+        }
+        response.json(results);
+    });
+});
+
+// 관심 상품 리스트
+router.get('/likelist/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.mypage_likeList, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '회원에러' });
+        }
+        response.json(results);
+    });
+});
+
+// 마이 리뷰
+router.get('/myreview/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.mypage_review, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '회원에러' });
+        }
+        response.json(results);
+    });
+});
+
+
 // 회원 탈퇴
 router.delete('/mypage/user/:user_no', function (request, response, next) {
     const userNo = request.params.user_no;
@@ -133,5 +173,18 @@ router.get('/getMyReview/:user_no', function (request, response, next) {
         response.json(results);
     });
 })
+
+// 입찰상품 리스트
+router.get('/orderlist/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.mypage_orderList, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '회원에러' });
+        }
+        response.json(results);
+    });
+});
 
 module.exports = router;
