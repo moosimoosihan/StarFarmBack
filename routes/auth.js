@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db.js');
+const db = require('../db/db.js');
 const sql = require('../sql.js');
 const bcrypt = require('bcrypt');  
 const fs = require('fs');
