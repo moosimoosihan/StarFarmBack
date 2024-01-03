@@ -154,7 +154,10 @@ module.exports = {
         WHERE tb_qna.user_no=tb_user.user_no AND tb_qna.user_no = ?;`, */
 
   // 리뷰
-  review_write: `INSERT INTO tb_review (review_con, user_no, goods_no, review_score) VALUES (?, ?, ?, ?)`,
+  review_write: `INSERT INTO tb_review (review_con, user_no, goods_no, sell_user_no, review_score) VALUES (?, ?, ?, ?, ?)`,
+  get_review_info: `select g.goods_img, g.goods_no, g.goods_nm, u.user_img, u.user_nick, u.user_no
+                        from tb_goods g, tb_user u
+                        where g.goods_no = ? and g.user_no = u.user_no`,
   get_my_review: `SELECT * 
                     FROM tb_review 
                     WHERE user_no = ? `,

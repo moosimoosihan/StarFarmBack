@@ -101,7 +101,7 @@ const upload = multer({
 });
 
 // 이미지 등록 
-router.post('/upload_img', upload.single('img'), (request, response) => {
+router.post('/upload_img', upload.array('img', 5), (request, response) => {
     setTimeout(() => {
         return response.status(200).json({
             message: 'success'
@@ -667,62 +667,45 @@ router.get('/likeCount/:goodsno', function (request, response, next) {
 });
 
 // 리뷰 작성
-router.post('/write_review', function (request, response, next) {
+router.post('/write_review/:goods_no', function (request, response, next) {
 
     const review = request.body;
 
     // 이미지를 제외한 리뷰 정보 먼저 입력
-    db.query(sql.review_write, [review.content, review.user_no, review.goods_no, review.order_no, review.order_status, review.review_score], function (error, result) {
+    db.query(sql.review_write, [review.review_con, review.writer_user, review.review_goods, review.sell_user_no, review.review_score], function (error, result) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'error' });
         }
 
-        // 이미지 있을 경우
-        if (review.review_img != '') {
-
-            // 리뷰 번호 확인
-            db.query(sql.get_review_no, [review.order_no], function (error, results, fields) {
-                if (error) {
-                    console.error(error);
-                    return response.status(500).json({ error: 'error' });
-                }
-                const filename = results[0].review_no;
-
-                const pastDir = `${__dirname}` + `../uploads/` + review.review_img;
-                const newDir = `${__dirname}` + `../uploads/uploadReview/`;
-
-                const extension = review.review_img.substring(review.review_img.lastIndexOf('.'))
-
-                fs.rename(pastDir, newDir + filename + extension, (err) => {
-                    if (err) {
-                        return response.status(500).json();
-                    }
-                    else {
-                        // 리뷰 이미지 삽입
-                        db.query(sql.review_img_insert, [filename + extension, results[0].review_no], function (error, results, fields) {
-                            if (error) {
-                                return response.status(500).json();
-                            }
-                        })
-                    }
-                });
-            })
-        }
 
         // 주문 상세에서 리뷰 체크 속성 0 -> 1 변경
-        db.query(sql.check_review, [review.order_no], function (error, results, fields) {
-            if (error) {
-                console.error(error);
-                return response.status(500).json({ error: 'error' });
-            }
-        })
+        // db.query(sql.check_review, [review.order_no], function (error, results, fields) {
+        //     if (error) {
+        //         console.error(error);
+        //         return response.status(500).json({ error: 'error' });
+        //     }
+        // })
 
         return response.status(200).json({
             message: 'review_complete'
         });
     })
 });
+
+//리뷰 상품정보 가져오기
+router.get('/write_review_info/:goods_no', function (request, response, next) {
+
+    const goods_no = request.params.goods_no;
+
+    db.query(sql.get_review_info, [goods_no], function (error, results, fields) {
+        if(error) {
+            console.error(error);
+            return response.status(500).json({ error: 'error' });
+        }
+        return response.json(results);
+    })
+})
 
 // 상품 상세 페이지 리뷰 리스트 불러오기
 router.get('/getReview/:goodsno', function (request, response, next) {
