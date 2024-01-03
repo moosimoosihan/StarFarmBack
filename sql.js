@@ -65,6 +65,11 @@ module.exports = {
   get_goods_info_user: `SELECT g.goods_no, g.user_no, user_img, u.user_nick, u.user_fr, u.user_adr1
                        FROM tb_user u, tb_goods g
                        WHERE u.user_no = g.user_no`,
+  main_popul_goods: `select g.goods_no, g.goods_nm, count(l.goods_no)
+                    from tb_goods g, tb_like l
+                    where l.goods_no = g.goods_no
+                    group by g.goods_no
+                    order by count(l.goods_no) desc`,
 
  //경매 입찰
  goods_auction: `SELECT g.goods_no, b.bid_no, b.bid_amount, b.user_no, u.user_nick
