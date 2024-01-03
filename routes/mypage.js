@@ -89,14 +89,21 @@ router.delete('/mypage/user/:user_no', function (request, response, next) {
 // 정보 수정
 router.post('/mypageupdate', function (request, response, next) {
     const user = request.body;
-
-    db.query(sql.mypage_update, [user.user_id, user.user_nick, user.user_email, user.user_mobile, user.user_zipcode, user.user_adr1, user.user_adr2, user.user_no], function (error, result, fields) {
-        if (error) {
-            console.error(error);
-            return response.status(500).json({ error: 'mypage_update_error' });
+    db.query(sql.mobile_check2, [user.user_mobile, user.user_no], function (error, results, fields) {
+        if(results.length <= 0) {
+            db.query(sql.mypage_update, [user.user_nick, user.user_email, user.user_mobile, user.user_zipcode, user.user_adr1, user.user_adr2, user.user_no], function (error, result, fields) {
+                if (error) {
+                    console.error(error);
+                    return response.status(500).json({ error: 'mypage_update_error' });
+                }
+                return response.status(200).json({ message: 'mypage_update' });
+            });
+        } else {
+            return response.status(200).json({
+                message: 'already_exist_phone'
+            })
         }
-        return response.status(200).json({ message: 'mypage_update' });
-    });
+    })
 });
 
 // 정보

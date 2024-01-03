@@ -5,6 +5,7 @@ module.exports = {
 
   id_check: `SELECT * FROM tb_user WHERE user_id = ?`,
   mobile_check: `SELECT * FROM tb_user WHERE user_mobile = ?`,
+  mobile_check2: `SELECT * FROM tb_user WHERE user_mobile = ? and user_no != ?`,
   get_user_no: `SELECT user_no FROM tb_user WHERE user_id = ?`,
   login: `SELECT user_pw FROM tb_user WHERE user_id = ?`,
   add_user_img: `UPDATE tb_user SET user_img = ? WHERE user_no = ?`,
@@ -100,7 +101,7 @@ module.exports = {
                   FROM tb_user
                   WHERE user_no = ?`,
   mypage_update: `UPDATE tb_user 
-                  SET user_nick = ?, user_pw = ?, user_mobile =?, user_zipcode =?, user_adr1 =?, user_adr2 =?
+                  SET user_nick = ?, user_email = ?, user_mobile =?, user_zipcode =?, user_adr1 =?, user_adr2 =?
                   WHERE user_no = ?`,
   mypage_orderList: `select g.goods_no, g.goods_nm, g.goods_start_price, g.goods_img, max(b.bid_amount) as bid_amount, b.goods_no, b.user_no, g.goods_state, g.goods_timer
                     from tb_goods g, tb_bid b
