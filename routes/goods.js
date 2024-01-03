@@ -101,7 +101,7 @@ const upload = multer({
 });
 
 // 이미지 등록 
-router.post('/upload_img', upload.single('img'), (request, response) => {
+router.post('/upload_img', upload.array('img', 5), (request, response) => {
     setTimeout(() => {
         return response.status(200).json({
             message: 'success'
