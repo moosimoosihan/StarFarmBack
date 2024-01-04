@@ -73,7 +73,7 @@ router.post('/add_goods', function (request, response) {
             catch (err) {
                 // 이미지 등록 실패
                 // -> DB에서 미리 등록한 상품도 다시 제거하기
-                db.query(sql.delete_goods, [goods.goods_nm], function (error, results, fields) {
+                db.query(sql.delete_goods_2, [goods.goods_nm], function (error, results, fields) {
                     console.log(err);
                     return response.status(200).json({
                         message: 'goodsimage_add_fail'
@@ -101,7 +101,7 @@ const upload = multer({
 });
 
 // 이미지 등록 
-router.post('/upload_img', upload.array('img', 5), (request, response) => {
+router.post('/upload_img', upload.single('img'), (request, response) => {
     setTimeout(() => {
         return response.status(200).json({
             message: 'success'
