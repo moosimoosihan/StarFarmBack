@@ -10,7 +10,7 @@ module.exports = {
   login: `SELECT user_pw FROM tb_user WHERE user_id = ?`,
   add_user_img: `UPDATE tb_user SET user_img = ? WHERE user_no = ?`,
   //카카오 로그인
-  kakaoJoin: `INSERT INTO tb_user (user_id, user_nick, user_email, user_social_tp, user_access_token) VALUES(?,?,?,1,?)`,
+  kakaoJoin: `INSERT INTO tb_user (user_id, user_nick, user_email, user_social_tp) VALUES(?,?,?,1)`,
   kakao_check: `SELECT * FROM tb_user WHERE user_id = ?`,
   //네이버 로그인
   naverlogin: `INSERT INTO tb_user (user_email, user_id, user_nick, user_social_tp, user_access_token) VALUES (?, ?, ?, 2, ?)`,

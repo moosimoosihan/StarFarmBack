@@ -15,7 +15,7 @@ router.post('/kakaoJoinProcess', function (request, response) {
     // 데이터 없을 시 가입
     db.query(sql.kakao_check, [kakao.user_id], function (error, results, fields) {
         if (results.length <= 0) {
-            db.query(sql.kakaoJoin, [kakao.user_id, kakao.user_nick, kakao.user_id, kakao.user_access_token], function (error, result) {
+            db.query(sql.kakaoJoin, [kakao.user_id, kakao.user_nick, kakao.user_id], function (error, result) {
                 if (error) {
                     console.error(error);
                     return response.status(500).json({ error: 'error' });
@@ -63,7 +63,7 @@ router.post('/kakaoLoginProcess', function (request, response) {
     // 데이터 없을 시 회원가입도 진행
     db.query(sql.kakao_check, [kakao.user_id], function (error, results, fields) {
         if (results.length <= 0) {
-            db.query(sql.kakaoJoin, [kakao.user_id, kakao.user_nick, kakao.user_id,  kakao.user_access_token], function (error, result) {
+            db.query(sql.kakaoJoin, [kakao.user_id, kakao.user_nick, kakao.user_id], function (error, result) {
                 if (error) {
                     console.error(error);
                     return response.status(500).json({ error: 'error' });
