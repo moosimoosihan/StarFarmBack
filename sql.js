@@ -140,7 +140,7 @@ module.exports = {
   // 아이디 비번 찾기
   id_find: `SELECT user_id FROM tb_user WHERE user_email = ?`,
   user_check: `SELECT user_no FROM tb_user WHERE user_email = ? AND user_id = ?`,
-
+  pass_update_tem: `UPDATE tb_user SET user_pw = ? WHERE user_id = ?`,
 
   // 좋아요(찜) 기능
   like_insert: `INSERT INTO tb_like (user_no, goods_no) VALUES (?,?)`,
