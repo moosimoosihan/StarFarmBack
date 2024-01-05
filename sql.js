@@ -32,6 +32,7 @@ module.exports = {
   /* order_status_update: `UPDATE tb_order
                             SET ORDER_STATUS = ?
                             WHERE ORDER_TRADE_NO IN (?)`, */
+  delete_user: `DELETE FROM tb_user WHERE user_id = ?`,
 
   // goods
   goods_add: `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, goods_timer, user_no) VALUES (?,?,?,?,?,?,?,?,?)`,
@@ -70,6 +71,8 @@ module.exports = {
                     where l.goods_no = g.goods_no
                     group by g.goods_no
                     order by count(l.goods_no) desc`,
+  get_goods_user_no : `SELECT user_no FROM tb_goods WHERE goods_no = ?`,
+  goods_comp : `UPDATE tb_goods SET goods_state = 2 WHERE goods_no = ?`,
 
  //경매 입찰
  goods_auction: `SELECT g.goods_no, b.bid_no, b.bid_amount, b.user_no, u.user_nick
@@ -77,11 +80,12 @@ module.exports = {
                  WHERE g.goods_no = ? and g.goods_no = b.goods_no and b.user_no = u.user_no
                  ORDER BY bid_create_dt asc`,
  goods_bidding: `INSERT INTO tb_bid (bid_amount, goods_no, user_no) value (?,?,?)`,
- goods_succ_bid: `SELECT b.user_no, b.goods_no, max(b.bid_amount) as succ_bid
+ goods_succ_bid: `SELECT b.user_no, b.goods_no, max(b.bid_amount) as succ_bid, g.goods_state
                  FROM tb_bid b, tb_goods g
                  WHERE b.goods_no = ?
                  limit 1`,
   goods_succ_price: `UPDATE tb_goods SET goods_succ_price = ? WHERE goods_no = ?`,
+  goods_succ_bid_update: `UPDATE tb_goods SET goods_succ_price = ?, goods_state = ? WHERE goods_no = ?`,
 //-------------------------------------------------------------------------------------------
 /*  order_payment: `INSERT INTO tb_order
                      (order_receive_nm, order_mobile, order_addr1, order_addr2, order_content, user_no)
@@ -119,7 +123,14 @@ module.exports = {
   mypage_review: `select g.user_no, g.goods_img, u.user_nick, r.review_con, r.review_score, r.review_create_dt, g.goods_no, g.goods_nm
                   from tb_review r, tb_goods g, tb_user u
                   where r.user_no = ? and r.goods_no = g.goods_no and r.sell_user_no = u.user_no`,
-
+  //유저페이지
+  get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no
+                    FROM tb_goods
+                    WHERE user_no = ?`,
+  get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r.review_create_dt, g.goods_no, g.goods_img, g.goods_nm, u.user_nick
+                    FROM tb_review r, tb_goods g, tb_user u
+                    WHERE r.sell_user_no = ? and u.user_no = r.user_no
+                    group by review_no`,
 
   //pass
   get_password: 'SELECT user_pw FROM tb_user WHERE user_no = ?',
@@ -167,11 +178,13 @@ module.exports = {
   get_my_review: `SELECT * 
                     FROM tb_review 
                     WHERE user_no = ? `,
-  get_celler_review: `SELECT *
+  get_seller_review: `SELECT *
                       FROM tb_review
-                      WHERE sell_user_no = ?`
+                      WHERE sell_user_no = ?`,
 
-
-
-
+  // 신고
+  report : `INSERT INTO tb_report (report_title, report_category, report_content, report_user_no, user_no) VALUES (?,?,?,?,?)`,
+  report_img: `UPDATE tb_report SET report_img = ? WHERE report_no = ?`,
+  get_report_no : `SELECT report_no FROM tb_report WHERE report_user_no = ? and user_no = ? ORDER BY report_no DESC LIMIT 1`,
+  delete_report : `DELETE FROM tb_report WHERE report_user_no = ? and user_no = ? ORDER BY report_no DESC LIMIT 1`,
 }

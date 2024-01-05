@@ -239,8 +239,8 @@ router.post('/join_process', function (request, response) {
                             }
                             catch (err) {
                                 // 이미지 등록 실패
-                                // -> DB에서 미리 등록한 상품도 다시 제거하기
-                                db.query(sql.delete_goods, [goods.goods_nm], function (error, results, fields) {
+                                // -> DB에서 미리 등록한 유저도 다시 제거하기
+                                db.query(sql.delete_user, [user.user_id], function (error, results, fields) {
                                     console.log(err);
                                     return response.status(200).json({
                                         message: 'image_add_fail'
@@ -432,5 +432,66 @@ router.post('/find_pass', function (request, response, next) {
 
     });
 });
+
+// 신고하기
+router.post('/report', function (request, response, next) {
+    const report = request.body;
+    try{
+        db.query(sql.report, [report.report_title, report.report_category, report.report_content, report.report_user_no, report.user_no], function (error, results, fields) {
+            console.log("img : "+report.report_img);
+            if (error) {
+                console.error(error);
+                return response.status(500).json({ error: 'report error' });
+            }
+            if(report.report_img == '') {  
+                return response.status(200).json({
+                    message: 'success'
+                })
+            } else {
+                try {
+                    // 신고 번호 불러오기
+                    db.query(sql.get_report_no, [report.report_user_no, report.user_no], function (error, results, fields) {
+                        const filename = results[0].report_no
+                        console.log(filename);
+        
+                        const pastDir = `${__dirname}` + `/../uploads/` + report.report_img;
+                        const newDir = `${__dirname}` + `/../uploads/reportImg/${filename}`;
+                        const extension = report.report_img.substring(report.report_img.lastIndexOf('.'))
+                        
+                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+        
+                        fs.rename(pastDir, newDir+ '/' + filename + extension, (err) => {
+                            if (err) {
+                                throw err;
+                            }
+                        });
+        
+                        // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
+                        db.query(sql.report_img, [filename+extension, filename], function (error, results, fields) {
+                            if (error) {
+                                throw error;
+                            } else {
+                                return response.status(200).json({
+                                    message: 'success'
+                                })
+                            }
+                        })
+                    })
+                } catch (err) {
+                    // 이미지 등록 실패
+                    // -> DB에서 미리 등록한 신고도 다시 제거하기
+                    db.query(sql.delete_report, [report.report_user_no, report.user_no], function (error, results, fields) {
+                        console.log(err);
+                        return response.status(200).json({
+                            message: 'image_add_fail'
+                        })
+                    })
+                }
+            }
+        })
+    } catch (err) {
+        console.log(err);
+    }
+})
 
 module.exports = router;

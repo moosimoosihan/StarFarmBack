@@ -194,4 +194,29 @@ router.get('/orderlist/:user_no', function (request, response, next) {
     });
 });
 
+//판매자 상품 불러오기
+router.get('/get_user_product/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.get_user_product, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '상품에러' });
+        }
+        response.json(results);
+    });
+});
+
+//판매자 리뷰 불러오기
+router.get('/get_user_review/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.get_user_review, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '리뷰에러' });
+        }
+        response.json(results);
+    })
+})
 module.exports = router;

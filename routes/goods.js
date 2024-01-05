@@ -7,6 +7,8 @@ const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
 
+const { scheduleJob } = require('node-schedule');
+
 // 메인 상품 리스트 
 router.get('/maingoods', function (request, response, next) {
     db.query(sql.goods_list, function (error, results, fields) {
@@ -62,11 +64,46 @@ router.post('/add_goods', function (request, response) {
                         if (error) {
                             throw error;
                         }
-                        else {
-                            return response.status(200).json({
-                                message: 'add_complete'
+                        const job = scheduleJob(goods.goods_timer, async () => {
+                            // 경매 종료 시간이 되면 상품 상태 변경 후 낙찰금액 DB에 입력
+                            db.query(sql.goods_succ_bid, [filename], function (error, results, fields) {
+                                if(error) {
+                                    console.error(error);
+                                    return response.status(500).json({ error: 'DB 에러' });
+                                }
+                                if(results[0].succ_bid!=null){
+                                    const goods_succ_bid = results[0].succ_bid;
+                                    const goods_no = results[0].goods_no;
+                                    const goods_state = results[0].goods_state;
+                                    if(goods_state == 0) {
+                                        db.query(sql.goods_succ_bid_update, [goods_succ_bid, 1, goods_no], function (error, results, fields) {
+                                            if(error) {
+                                                console.error(error);
+                                                return response.status(500).json({ error: 'DB 에러' });
+                                            }
+                                        })
+                                    }
+                                } else {
+                                    // 낙찰자가 없는 경우 상태 변경 후 종료
+                                    db.query(sql.goods_succ_bid_update, [ 0, 3, filename], function (error, results, fields) {
+                                        if(error) {
+                                            console.error(error);
+                                            return response.status(500).json({ error: 'DB 에러' });
+                                        }
+                                    })
+                                }
+
                             })
-                        }
+                        })
+                        job.on('error', (err) => {
+                            console.error('스케줄링 에러', err);
+                        });
+                        job.on('success', () => {
+                            console.log('스케줄링 성공');
+                        });
+                        return response.status(200).json({
+                            message: 'add_complete'
+                        })
                     })
                 })   
             }
@@ -316,16 +353,42 @@ router.get('/goodsBidList/:id', function (request, response, next) {
 router.post('/goodsBidding/:id', function (request, response) {
     const goods = request.body;
 
-    db.query(sql.goods_bidding, [goods.bid_amount, goods.goods_no, goods.user_no], function (error, results, fields) {
+    // 상품 상태가 0이 아닌 경우 입찰 불가
+    db.query(sql.get_goods_info, [goods.goods_no], function (error, results, fields) {
         if (error) {
             console.error(error);
-            return response.status(500).json({ error: '상품 입찰 에러' });
+            return response.status(500).json({ error: '상품 상태 에러' });
         }
-        else {
+        if (results[0].goods_state == 0) {
+            db.query(sql.goods_bidding, [goods.bid_amount, goods.goods_no, goods.user_no], function (error, results, fields) {
+                if (error) {
+                    console.error(error);
+                    return response.status(500).json({ error: '상품 입찰 에러' });
+                }
+                else {
+                    return response.status(200).json({
+                        message: 'bidding_complete'
+                    })
+                }
+            })
+        } else {
             return response.status(200).json({
-                message: 'bidding_complete'
+                message: 'bidding_fail'
             })
         }
+    })
+})
+
+// 상품 상태 변경
+router.post('/saleComp/:id', function (request, response, next) {
+    const goodsno = request.params.id;
+
+    db.query(sql.goods_comp, [goodsno], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '상품 상태 변경 에러' });
+        }
+        response.json(results);
     })
 });
 
@@ -625,7 +688,6 @@ router.post('/likeCheck/:user_no/:goodsno', function (request, response, next) {
     }
 
     db.query(sql.like_check, [user_no, goods_no], function (error, results, fields) {
-        console.log(results);
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '에러' });
@@ -845,5 +907,18 @@ router.post('/basketSuccess/:user_no', function (request, response, next) {
         });
     })
 });
+
+// 상품 번호 가져오기
+router.get('/getUserNo/:goods_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+
+    db.query(sql.get_goods_user_no, [goods_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'DB 에러' });
+        }
+        return response.json(results);
+    })
+})
 
 module.exports = router;
