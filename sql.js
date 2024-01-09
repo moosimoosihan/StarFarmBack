@@ -106,7 +106,7 @@ module.exports = {
 
   // 마이페이지
   user_get_review: `SELECT * FROM tb_review`,
-  get_user_info: `SELECT user_no, user_id, user_nick, user_email, user_img, user_mobile, user_zipcode, user_adr1, user_adr2, user_fr, user_social_tp
+  get_user_info: `SELECT user_no, user_id, user_nick, user_email, user_img, user_mobile, user_zipcode, user_adr1, user_adr2, user_fr, user_social_tp, user_tp
                   FROM tb_user
                   WHERE user_no = ?`,
   mypage_update: `UPDATE tb_user 
