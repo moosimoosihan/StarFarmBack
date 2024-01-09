@@ -89,10 +89,10 @@ module.exports = {
   goods_succ_price: `UPDATE tb_goods SET goods_succ_price = ? WHERE goods_no = ?`,
   goods_succ_bid_update: `UPDATE tb_goods SET goods_succ_price = ?, goods_state = ? WHERE goods_no = ?`,
 //-------------------------------------------------------------------------------------------
-/*  order_payment: `INSERT INTO tb_order
-                     (order_receive_nm, order_mobile, order_addr1, order_addr2, order_content, user_no)
-                     VALUES (?,?,?,?,?,?)`,
-  orderlist: `SELECT od.*, o.ORDER_STATUS, o.ORDER_CREATE_DT, o.ORDER_TP
+  order_payment: `INSERT INTO tb_order
+                     (order_receive_nm, order_mobile, order_addr1, order_addr2, order_zipcode, order_content, user_no)
+                     VALUES (?,?,?,?,?,?,?)`,
+  /* orderlist: `SELECT od.*, o.ORDER_STATUS, o.ORDER_CREATE_DT, o.ORDER_TP
                   FROM tb_order_detail od
                   JOIN tb_order o ON od.ORDER_TRADE_NO = o.ORDER_TRADE_NO
                   WHERE o.user_no =?`,
