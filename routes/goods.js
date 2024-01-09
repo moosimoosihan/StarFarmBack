@@ -71,18 +71,17 @@ router.post('/add_goods', function (request, response) {
                                     console.error(error);
                                     return response.status(500).json({ error: 'DB 에러' });
                                 }
+                                console.log(results)
                                 if(results[0].succ_bid!=null){
-                                    const goods_succ_bid = results[0].succ_bid;
-                                    const goods_no = results[0].goods_no;
-                                    const goods_state = results[0].goods_state;
-                                    if(goods_state == 0) {
-                                        db.query(sql.goods_succ_bid_update, [goods_succ_bid, 1, goods_no], function (error, results, fields) {
-                                            if(error) {
-                                                console.error(error);
-                                                return response.status(500).json({ error: 'DB 에러' });
-                                            }
-                                        })
-                                    }
+                                    var goods_succ_bid = results[0].succ_bid;
+                                    var goods_no = results[0].goods_no;
+                                    var goods_state = results[0].goods_state;
+                                    db.query(sql.goods_succ_bid_update, [goods_succ_bid, 1, goods_no], function (error, results, fields) {
+                                        if(error) {
+                                            console.error(error);
+                                            return response.status(500).json({ error: 'DB 에러' });
+                                        }
+                                    })
                                 } else {
                                     // 낙찰자가 없는 경우 상태 변경 후 종료
                                     db.query(sql.goods_succ_bid_update, [ 0, 3, filename], function (error, results, fields) {
