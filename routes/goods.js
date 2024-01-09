@@ -230,7 +230,6 @@ router.post('/update_goods', function (request, response, next) {
 // 상품 제거
 router.post('/delete_goods/:goods_no', function (request, response, next) {
     const goods_no = request.params.goods_no;
-    console.log(goods_no);
     // 이미지 이름 불러오기
     // db.query(sql.get_img_nm, [goods_no], function (error, results, fields) {
     //     if (error) {
@@ -918,6 +917,35 @@ router.get('/getUserNo/:goods_no', function (request, response, next) {
         }
         return response.json(results);
     })
+})
+
+router.get('/allGoods', function (request, response, next) {
+
+    db.query(sql.all_goods, function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'DB 에러'});
+        }
+        return response.json(results);
+    })
+})
+
+router.post('/restoreGoods/:goods_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+    try{
+        db.query(sql.restore_goods, [goods_no], function (error, result, fields) {
+            if(error) {
+                console.error(error);
+                return response.status(500).json({ error: 'DB 에러' }); 
+            } else {
+                return response.status(200).json({
+                    message: 'restore_complete'
+                })
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 module.exports = router;

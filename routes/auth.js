@@ -342,7 +342,7 @@ router.get('/admin/userlist/:keyword', function (request, response, next) {
         }
         response.json(results);
     });
-});
+})
 
 // 회원 상태 변경
 router.put('/admin/ban', function (request, response, next) {
@@ -358,16 +358,16 @@ router.put('/admin/ban', function (request, response, next) {
     });
 });
 
-// 관리자_고양이정보
-router.get('/admin/getCatData/:user_no', function (request, response, next) {
-    const user_no = request.params.user_no;
-
-    db.query(sql.cat_info, [user_no], function (error, results, fields) {
+// 관리자_거래관리 상품삭제
+router.post('/admin/delete/:goods_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+    
+    db.query(sql.delete_goods, [goods_no], function (error, results, fields) {
         if (error) {
             console.error(error);
-            return response.status(500).json({ error: '고양이정보에러' });
+            return response.status(500).json({error: '삭제 실패'});
         }
-        response.json(results);
+        return response.status(200).json({ message: '삭제성공' });
     });
 });
 

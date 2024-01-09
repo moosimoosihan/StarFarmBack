@@ -44,6 +44,7 @@ module.exports = {
   delete_goods: `UPDATE tb_goods SET delete_time = now() WHERE goods_no = ?`,
   delete_goods_2: `DELETE FROM tb_goods WHERE goods_nm = ?`,
   get_img_nm: `SELECT goods_img, goods_content FROM tb_goods WHERE goods_no = ?`,
+  all_goods: `SELECT * FROM tb_goods`,
   goods_list: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer
                   FROM tb_goods
                   WHERE delete_time IS NULL
@@ -75,6 +76,7 @@ module.exports = {
                     order by count(l.goods_no) desc`,
   get_goods_user_no : `SELECT user_no FROM tb_goods WHERE goods_no = ?`,
   goods_comp : `UPDATE tb_goods SET goods_state = 2 WHERE goods_no = ?`,
+  restore_goods : `UPDATE tb_goods SET delete_time = null WHERE goods_no = ?`,
 
  //경매 입찰
  goods_auction: `SELECT g.goods_no, b.bid_no, b.bid_amount, b.user_no, u.user_nick
