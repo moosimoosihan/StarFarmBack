@@ -9,6 +9,7 @@ module.exports = {
   get_user_no: `SELECT user_no FROM tb_user WHERE user_id = ?`,
   login: `SELECT user_pw FROM tb_user WHERE user_id = ?`,
   add_user_img: `UPDATE tb_user SET user_img = ? WHERE user_no = ?`,
+  ban_check: `SELECT user_ban FROM tb_user WHERE user_id = ?`,
   //카카오 로그인
   kakaoJoin: `INSERT INTO tb_user (user_id, user_nick, user_email, user_social_tp) VALUES(?,?,?,1)`,
   kakao_check: `SELECT * FROM tb_user WHERE user_id = ?`,
@@ -33,6 +34,7 @@ module.exports = {
                             SET ORDER_STATUS = ?
                             WHERE ORDER_TRADE_NO IN (?)`, */
   delete_user: `DELETE FROM tb_user WHERE user_id = ?`,
+  userlist: `SELECT * FROM tb_user WHERE user_tp = 0`,
 
   // goods
   goods_add: `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, goods_timer, user_no) VALUES (?,?,?,?,?,?,?,?,?)`,
@@ -106,7 +108,7 @@ module.exports = {
 
   // 마이페이지
   user_get_review: `SELECT * FROM tb_review`,
-  get_user_info: `SELECT user_no, user_id, user_nick, user_email, user_img, user_mobile, user_zipcode, user_adr1, user_adr2, user_fr, user_social_tp, user_tp
+  get_user_info: `SELECT user_no, user_id, user_nick, user_email, user_img, user_mobile, user_zipcode, user_adr1, user_adr2, user_fr, user_social_tp, user_tp, user_ban
                   FROM tb_user
                   WHERE user_no = ?`,
   mypage_update: `UPDATE tb_user 
@@ -187,4 +189,5 @@ module.exports = {
   report_img: `UPDATE tb_report SET report_img = ? WHERE report_no = ?`,
   get_report_no : `SELECT report_no FROM tb_report WHERE report_user_no = ? and user_no = ? ORDER BY report_no DESC LIMIT 1`,
   delete_report : `DELETE FROM tb_report WHERE report_user_no = ? and user_no = ? ORDER BY report_no DESC LIMIT 1`,
+  get_report_count : `SELECT COUNT(*) as count FROM tb_report WHERE report_user_no = ?`,
 }

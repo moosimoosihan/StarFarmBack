@@ -274,23 +274,31 @@ router.post('/login_process', function (request, response) {
             return response.status(200).json({
                 message: 'undefined_id'
             })
-        }
-        else {
-            db.query(sql.login, [loginUser.user_id], function (error, results, fields) {
-                const same = bcrypt.compareSync(loginUser.user_pw, results[0].user_pw);
-
-                if (same) {
-                    // ID에 저장된 pw 값과 입력한 pw값이 동일한 경우
-                    db.query(sql.get_user_no, [loginUser.user_id], function (error, results, fields) {
-                        return response.status(200).json({
-                            message: results[0].user_no
-                        })
-                    })
-                }
-                else {
-                    // 비밀번호 불일치
+        } else {
+            db.query(sql.ban_check, [loginUser.user_id], function (error, results, fields) {
+                if (results[0].user_ban == 1) {
+                    // 정지된 회원
                     return response.status(200).json({
-                        message: 'incorrect_pw'
+                        message: 'ban'
+                    })
+                } else {
+                    db.query(sql.login, [loginUser.user_id], function (error, results, fields) {
+                        const same = bcrypt.compareSync(loginUser.user_pw, results[0].user_pw);
+
+                        if (same) {
+                            // ID에 저장된 pw 값과 입력한 pw값이 동일한 경우
+                            db.query(sql.get_user_no, [loginUser.user_id], function (error, results, fields) {
+                                return response.status(200).json({
+                                    message: results[0].user_no
+                                })
+                            })
+                        }
+                        else {
+                            // 비밀번호 불일치
+                            return response.status(200).json({
+                                message: 'incorrect_pw'
+                            })
+                        }
                     })
                 }
             })
@@ -324,7 +332,7 @@ router.get('/admin/userlist/:keyword', function (request, response, next) {
     let search = '';
 
     if (keyword != 'none') {
-        search = ' AND user_email Like "%' + keyword + '%" ';
+        search = ' AND user_id Like "%' + keyword + '%" ';
     }
 
     db.query(sql.userlist + search, function (error, results, fields) {
@@ -336,16 +344,17 @@ router.get('/admin/userlist/:keyword', function (request, response, next) {
     });
 });
 
-// 회원 삭제
-router.delete('/admin/userlist/:user_no', function (request, response, next) {
-    const userNo = request.params.user_no;
+// 회원 상태 변경
+router.put('/admin/ban', function (request, response, next) {
+    const user_no = request.body.user_no;
+    const user_ban = request.body.user_ban;
 
-    db.query(sql.deleteUser, [userNo], function (error, result, fields) {
+    db.query(sql.ban_update_user, [user_ban, user_no], function (error, result, fields) {
         if (error) {
             console.error(error);
-            return response.status(500).json({ error: '회원삭제에러' });
+            return response.status(500).json({ error: '회원정지에러' });
         }
-        return response.status(200).json({ message: '회원삭제성공' });
+        return response.status(200).json({ message: '회원정지성공' });
     });
 });
 
@@ -493,5 +502,18 @@ router.post('/report', function (request, response, next) {
         console.log(err);
     }
 })
+
+// 신고 당한 횟수
+router.get('/report_count/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.get_report_count, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'report error' });
+        }
+        response.json(results);
+    });
+});
 
 module.exports = router;
