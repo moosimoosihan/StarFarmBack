@@ -371,6 +371,18 @@ router.post('/admin/delete/:goods_no', function (request, response, next) {
     });
 });
 
+//AdminReport
+router.get('/admin/report', function (request, response, next){
+    const user_no = request.params.user_no;
+    db.query(sql.report_list , function (error, results,  fields){
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '신고관리에러' });
+        }
+        response.json(results);
+    });
+});             
+
 // 아이디 찾기 230711
 router.post('/findId', function (request, response, next) {
     const user_email = request.body.user_email;

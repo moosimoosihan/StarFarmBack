@@ -33,6 +33,43 @@ router.get('/mypage/:user_no', function (request, response, next) {
     });
 });
 
+//마이페이지 메인 내가 찜한 상품
+router.get('/likelist_preview/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.mypage_like_list2, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '찜목록 에러' });
+        }
+        response.json(results);
+    })
+})
+//마이페이지 메인 나의 입찰 상품
+router.get('/orderlist_preview/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.mypage_orderList2, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '입찰목록 에러' });
+        }
+        response.json(results);
+    })
+})
+// 마이페이지 나의 판매 상품
+router.get('/saleList_preview/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.mypage_saleList2, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '판매목록 에러' });
+        }
+        response.json(results);
+    })
+})
+
 // 판매 상품 리스트
 router.get('/salelist/:user_no', function (request, response, next) {
     const user_no = request.params.user_no;

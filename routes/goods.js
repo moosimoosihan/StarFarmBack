@@ -394,6 +394,8 @@ router.post('/saleComp/:id', function (request, response, next) {
 router.post('/orderPayment', function (request, response, next) {
     const order = request.body;
 
+    console.log(order);
+
     db.query(sql.order_payment, [order.order_receive_nm, order.order_mobile, order.order_addr1, order.order_addr2, order.order_zipcode, order.order_content, order.user_no],
         function (error, results, fields) {
             if (error) {
@@ -401,9 +403,18 @@ router.post('/orderPayment', function (request, response, next) {
                     message: 'DB_error'
                 });
             }
-            return response.status(200).json({
-                message: '완료'
-            });
+            db.query(sql.order_payment_no, [order.user_no], function (error, results, fields) {
+                if(error) {
+                    return response.status(500).json({
+                        message: 'DB_error'
+                    });
+                }
+                return response.status(200).json({
+                    message: '완료',
+                    order_no: results[0].order_no
+                });
+            })
+            
 
             // if (Array.isArray(order_detail)) {
             //     const detailPromises = order_detail.map((detail) => {
@@ -945,5 +956,17 @@ router.post('/restoreGoods/:goods_no', function (request, response, next) {
         console.log(error)
     }
 })
+
+// 주문 상세보기
+router.get('/orderInfo/:orderno', function (request, response, next) {
+    const orderno = request.params.orderno;
+    db.query(sql.order_info, [orderno], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '결제리스트에러' });
+        }
+        response.json(results);
+    });
+});
 
 module.exports = router;

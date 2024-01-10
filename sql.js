@@ -24,7 +24,7 @@ module.exports = {
                     WHERE user_tp = 0 and r.report_user_no = u.user_no
                     GROUP BY u.user_no`,
   ban_update_user: `UPDATE tb_user SET user_ban = ? where user_no = ?`,
-
+  report_list: `SELECT * FROM tb_report`, 
   
   admin_orderlist: `SELECT g.goods_no, g.goods_nm, MAX(b.bid_amount), g.goods_state, g.goods_category, g.user_no, b.user_no, b.goods_no
                     FROM tb_goods g, tb_bid b
@@ -48,7 +48,8 @@ module.exports = {
   goods_list: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer
                   FROM tb_goods
                   WHERE delete_time IS NULL
-                  ORDER BY goods_upload_date desc`,
+                  ORDER BY goods_upload_date desc
+                  limit 10`,
   update_goods: `UPDATE tb_goods
                 SET goods_nm = ?, goods_category = ?, goods_category_detail = ?, goods_start_price = ?, goods_timer = ?, goods_content = ?
                 WHERE goods_no = ?`,
@@ -63,7 +64,7 @@ module.exports = {
   goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state
                        FROM tb_goods
                        WHERE goods_nm LIKE ?`,
-  get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price
+  get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no
                        FROM tb_goods
                        WHERE goods_no = ?`,
   get_goods_info_user: `SELECT g.goods_no, g.user_no, user_img, u.user_nick, u.user_fr, u.user_adr1
@@ -94,6 +95,8 @@ module.exports = {
   order_payment: `INSERT INTO tb_order
                      (order_receive_nm, order_mobile, order_addr1, order_addr2, order_zipcode, order_content, user_no)
                      VALUES (?,?,?,?,?,?,?)`,
+  order_payment_no : `SELECT order_no FROM tb_order WHERE user_no = ? ORDER BY order_no DESC LIMIT 1`,
+  order_info : `SELECT * FROM tb_order WHERE order_no = ?`,
   /* orderlist: `SELECT od.*, o.ORDER_STATUS, o.ORDER_CREATE_DT, o.ORDER_TP
                   FROM tb_order_detail od
                   JOIN tb_order o ON od.ORDER_TRADE_NO = o.ORDER_TRADE_NO
@@ -129,6 +132,16 @@ module.exports = {
                   where r.user_no = ? and r.goods_no = g.goods_no and r.sell_user_no = u.user_no`,
   get_chat_room: `SELECT * FROM TB_CHATROOM WHERE CHATROOM_USER1 = ? or CHATROOM_USER2 = ?`,
   get_comment: `SELECT c.CHAT_CONTENT FROM TB_CHAT c, TB_CHATROOM r WHERE r.CHATROOM_NO = ? ORDER BY c.CHAT_DATE DESC LIMIT 1`,
+  mypage_like_list2: `SELECT l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no
+                      FROM tb_like l, tb_goods g
+                      WHERE l.user_no = 1 and l.goods_no = g.goods_no
+                      ORDER BY g.goods_upload_date DESC limit 4`,
+  mypage_orderList2: `select g.goods_no, g.goods_nm, g.goods_start_price, g.goods_img, max(b.bid_amount) as bid_amount, b.goods_no, b.user_no, g.goods_state, g.goods_timer
+                    from tb_goods g, tb_bid b
+                    where g.goods_no = b.goods_no and b.user_no = ?
+                    group by g.goods_no
+                    order by g.goods_upload_date desc limit 4`,
+  mypage_saleList2: `select * from tb_goods where delete_time is null and user_no = ? order by goods_upload_date desc limit 4`,
 
   //유저페이지
   get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no
