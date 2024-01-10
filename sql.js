@@ -127,6 +127,9 @@ module.exports = {
   mypage_review: `select g.user_no, g.goods_img, u.user_nick, r.review_con, r.review_score, r.review_create_dt, g.goods_no, g.goods_nm
                   from tb_review r, tb_goods g, tb_user u
                   where r.user_no = ? and r.goods_no = g.goods_no and r.sell_user_no = u.user_no`,
+  get_chat_room: `SELECT * FROM TB_CHATROOM WHERE CHATROOM_USER1 = ? or CHATROOM_USER2 = ?`,
+  get_comment: `SELECT c.CHAT_CONTENT FROM TB_CHAT c, TB_CHATROOM r WHERE r.CHATROOM_NO = ? ORDER BY c.CHAT_DATE DESC LIMIT 1`,
+
   //유저페이지
   get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no
                     FROM tb_goods
@@ -192,4 +195,14 @@ module.exports = {
   get_report_no : `SELECT report_no FROM tb_report WHERE report_user_no = ? and user_no = ? ORDER BY report_no DESC LIMIT 1`,
   delete_report : `DELETE FROM tb_report WHERE report_user_no = ? and user_no = ? ORDER BY report_no DESC LIMIT 1`,
   get_report_count : `SELECT COUNT(*) as count FROM tb_report WHERE report_user_no = ?`,
+
+  // 채팅
+  chat_room_check : `SELECT * FROM TB_CHATROOM WHERE CHATROOM_USER1 = ? and CHATROOM_USER2 = ?`,
+  create_chat_room : `INSERT INTO TB_CHATROOM (CHATROOM_USER1, CHATROOM_USER2) VALUES (?,?)`,
+  get_chat : `SELECT * FROM TB_CHAT WHERE CHATROOM_NO = ?`,
+  send_chat : `INSERT INTO TB_CHAT (chatroom_no, chat_user, chat_content) VALUES (?,?,?)`,
+  chat_room_in1 : `UPDATE TB_CHATROOM SET CHATROOM_OUT1 = 0 WHERE CHATROOM_NO = ?`,
+  chat_room_in2 : `UPDATE TB_CHATROOM SET CHATROOM_OUT2 = 0 WHERE CHATROOM_NO = ?`,
+  chat_room_out1 : `UPDATE TB_CHATROOM SET CHATROOM_OUT1 = 1 WHERE CHATROOM_NO = ?`,
+  chat_room_out2 : `UPDATE TB_CHATROOM SET CHATROOM_OUT2 = 1 WHERE CHATROOM_NO = ?`,
 }

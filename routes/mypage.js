@@ -219,4 +219,43 @@ router.get('/get_user_review/:user_no', function (request, response, next) {
         response.json(results);
     })
 })
+
+// 채팅방 리스트 불러오기
+router.get('/getChatRoom/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.get_chat_room, [user_no, user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '채팅에러' });
+        }
+        // 유저 1번일 경우 CHATROOM_OUT1이 1일 경우 채팅방 불러오지 않기
+        if(results.CHATROOM_USER1===user_no && results.CHATROOM_OUT1===1) {
+            return response.status(200).json({
+                message: 'room out'
+            })
+        } else if(results.CHATROOM_USER2===user_no && results.CHATROOM_OUT2===1) {
+            // 유저 2번일 경우 CHATROOM_OUT2이 1일 경우 채팅방 불러오지 않기
+            return response.status(200).json({
+                message: 'room out'
+            })
+        } else {
+            response.json(results);
+        }
+    })
+})
+
+// 채팅방 최근 대화 불러오기
+router.get('/chatroomcomment/:chat_room_no', function (request, response, next) {
+    const chat_room_no = request.params.chat_room_no;
+
+    db.query(sql.get_comment, [chat_room_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '채팅에러' });
+        }
+        response.json(results);
+    })
+})
+
 module.exports = router;
