@@ -295,7 +295,7 @@ router.get('/goodsSearchMax/:keyword', function (request, response, next) {
 // Main_상품 검색 리스트
 router.get('/goodsSearch/:keyword/:num', function (request, response, next) {
     const keyword = '%' + request.params.keyword + '%';
-    const num = request.params.num;
+    const num = parseInt(request.params.num);
 
     db.query(sql.goods_searchlist, [keyword, num], function (error, results, fields) {
         if (error) {
@@ -305,6 +305,62 @@ router.get('/goodsSearch/:keyword/:num', function (request, response, next) {
         response.json(results);
     });
 });
+
+// 카테고리 검색
+router.get('/category_search/:category/:num', function (request, response, next) {
+    const category = request.params.category;
+    const num = parseInt(request.params.num);
+
+    db.query(sql.search_category, [category, num], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'search_error' });
+        }
+        response.json(results);
+    });
+})
+
+// 카테고리 디테일 검색
+router.get('/category_detail_search/:category/:category_detail/:num', function (request, response, next) {
+    const category = request.params.category;
+    const category_detail = request.params.category_detail;
+    const num = parseInt(request.params.num);
+
+    db.query(sql.search_category_detail, [category, category_detail, num], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'search_error' });
+        }
+        response.json(results);
+    });
+})
+
+//카테고리 검색 최대 갯수
+router.get('/category_search_max/:category', function (request, response, next) {
+    const category = request.params.category;
+
+    db.query(sql.search_category_count, [category], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'search_error' });
+        }
+        response.json(results);
+    });
+})
+
+//카테고리 디테일 검색 최대 갯수
+router.get('/category_detail_search_max/:category/:category_detail', function (request, response, next) {
+    const category = request.params.category;
+    const category_detail = request.params.category_detail;
+
+    db.query(sql.search_category_detail_count, [category, category_detail], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'search_error' });
+        }
+        response.json(results);
+    });
+})
 
 // 상품 상세정보
 router.get('/goodsInfo/:id', function (request, response, next) {

@@ -61,10 +61,11 @@ module.exports = {
                           FROM tb_goods
                           WHERE goods_category = ? and goods_categody_detail = ?
                           ORDER BY goods_upload_date desc`,
-  goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state
+  goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no
                        FROM tb_goods
                        WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0
-                       limit ?, 10`,
+                       limit ?, 10
+                       ORDER BY goods_upload_date desc`,
   get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no
                        FROM tb_goods
                        WHERE goods_no = ?`,
@@ -86,6 +87,18 @@ module.exports = {
   goods_comp : `UPDATE tb_goods SET goods_state = 2 WHERE goods_no = ?`,
   restore_goods : `UPDATE tb_goods SET delete_time = null WHERE goods_no = ?`,
   search_goods_count : `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0`,
+  search_category : `select goods_no, goods_nm, goods_img, GOODS_START_PRICE, goods_state, user_no
+                    from tb_goods
+                    where goods_category = ? and DELETE_TIME is null and GOODS_STATE = 0
+                    limit ?, 10
+                    ORDER BY goods_upload_date desc`,
+  search_category_detail : `select goods_no, goods_nm, goods_img, GOODS_START_PRICE, goods_state, user_no
+                            from tb_goods
+                            where goods_category = ? and GOODS_CATEGORY_DETAIL = ? and DELETE_TIME is null and GOODS_STATE = 0
+                            limit ?, 10
+                            ORDER BY goods_upload_date desc`,
+  search_category_count: `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_category = ? and delete_time is null and goods_state = 0`,
+  search_category_detail_count: `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_category = ? and goods_category_detail = ? and delete_time is null and goods_state = 0`,
 
  //경매 입찰
  goods_auction: `SELECT g.goods_no, b.bid_no, b.bid_amount, b.user_no, u.user_nick
