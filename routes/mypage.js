@@ -229,19 +229,7 @@ router.get('/getChatRoom/:user_no', function (request, response, next) {
             console.error(error);
             return response.status(500).json({ error: '채팅에러' });
         }
-        // 유저 1번일 경우 CHATROOM_OUT1이 1일 경우 채팅방 불러오지 않기
-        if(results.CHATROOM_USER1===user_no && results.CHATROOM_OUT1===1) {
-            return response.status(200).json({
-                message: 'room out'
-            })
-        } else if(results.CHATROOM_USER2===user_no && results.CHATROOM_OUT2===1) {
-            // 유저 2번일 경우 CHATROOM_OUT2이 1일 경우 채팅방 불러오지 않기
-            return response.status(200).json({
-                message: 'room out'
-            })
-        } else {
-            response.json(results);
-        }
+        response.json(results);
     })
 })
 

@@ -200,6 +200,7 @@ module.exports = {
   chat_room_check : `SELECT * FROM TB_CHATROOM WHERE CHATROOM_USER1 = ? and CHATROOM_USER2 = ?`,
   create_chat_room : `INSERT INTO TB_CHATROOM (CHATROOM_USER1, CHATROOM_USER2) VALUES (?,?)`,
   get_chat : `SELECT * FROM TB_CHAT WHERE CHATROOM_NO = ?`,
+  get_room : `SELECT * FROM TB_CHATROOM WHERE CHATROOM_NO = ?`,
   send_chat : `INSERT INTO TB_CHAT (chatroom_no, chat_user, chat_content) VALUES (?,?,?)`,
   chat_room_in1 : `UPDATE TB_CHATROOM SET CHATROOM_OUT1 = 0 WHERE CHATROOM_NO = ?`,
   chat_room_in2 : `UPDATE TB_CHATROOM SET CHATROOM_OUT2 = 0 WHERE CHATROOM_NO = ?`,
