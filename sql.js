@@ -64,8 +64,8 @@ module.exports = {
   goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no
                        FROM tb_goods
                        WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0
-                       limit ?, 10
-                       ORDER BY goods_upload_date desc`,
+                       ORDER BY goods_upload_date desc
+                       limit ?, 10`,
   get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no
                        FROM tb_goods
                        WHERE goods_no = ?`,
@@ -90,13 +90,13 @@ module.exports = {
   search_category : `select goods_no, goods_nm, goods_img, GOODS_START_PRICE, goods_state, user_no
                     from tb_goods
                     where goods_category = ? and DELETE_TIME is null and GOODS_STATE = 0
-                    limit ?, 10
-                    ORDER BY goods_upload_date desc`,
+                    ORDER BY goods_upload_date desc
+                    limit ?, 10`,
   search_category_detail : `select goods_no, goods_nm, goods_img, GOODS_START_PRICE, goods_state, user_no
                             from tb_goods
                             where goods_category = ? and GOODS_CATEGORY_DETAIL = ? and DELETE_TIME is null and GOODS_STATE = 0
-                            limit ?, 10
-                            ORDER BY goods_upload_date desc`,
+                            ORDER BY goods_upload_date desc
+                            limit ?, 10`,
   search_category_count: `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_category = ? and delete_time is null and goods_state = 0`,
   search_category_detail_count: `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_category = ? and goods_category_detail = ? and delete_time is null and goods_state = 0`,
 
