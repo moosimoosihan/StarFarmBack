@@ -63,7 +63,7 @@ module.exports = {
                           ORDER BY goods_upload_date desc`,
   goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state
                        FROM tb_goods
-                       WHERE goods_nm LIKE ?`,
+                       WHERE goods_nm LIKE ? and delete_time is null`,
   get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no
                        FROM tb_goods
                        WHERE goods_no = ?`,
@@ -72,9 +72,15 @@ module.exports = {
                        WHERE u.user_no = g.user_no`,
   main_popul_goods: `select g.goods_no, g.goods_nm, count(l.goods_no)
                     from tb_goods g, tb_like l
-                    where l.goods_no = g.goods_no
+                    where l.goods_no = g.goods_no and delete_time is null
                     group by g.goods_no
-                    order by count(l.goods_no) desc`,
+                    order by count(l.goods_no) desc
+                    limit 3`,
+  main_popul_empty_goods: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer
+                            FROM tb_goods
+                            WHERE delete_time IS NULL
+                            ORDER BY goods_upload_date desc
+                            limit 3`,
   get_goods_user_no : `SELECT user_no FROM tb_goods WHERE goods_no = ?`,
   goods_comp : `UPDATE tb_goods SET goods_state = 2 WHERE goods_no = ?`,
   restore_goods : `UPDATE tb_goods SET delete_time = null WHERE goods_no = ?`,
