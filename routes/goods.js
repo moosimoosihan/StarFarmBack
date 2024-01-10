@@ -392,11 +392,9 @@ router.post('/saleComp/:id', function (request, response, next) {
 
 // 상품 결제 
 router.post('/orderPayment', function (request, response, next) {
-    const { order, order_detail } = request.body;
-    console.log(order);
-    console.log(order_detail);
+    const order = request.body;
 
-    db.query(sql.order_payment, [order.order_nm, order.order_mobile, order.order_adr1, order.order_adr2, order.order_zipcode, order.order_content, order.user_no],
+    db.query(sql.order_payment, [order.order_receive_nm, order.order_mobile, order.order_addr1, order.order_addr2, order.order_zipcode, order.order_content, order.user_no],
         function (error, results, fields) {
             if (error) {
                 return response.status(500).json({
