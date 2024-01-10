@@ -279,14 +279,25 @@ router.get('/goodsCate/:category/:sortCase', function (request, response, next) 
     });
 });
 
-// Main_상품 검색 리스트
-router.get('/goodsSearch/:keyword/:sortCase', function (request, response, next) {
+// Main 상품 검색 최대 숫자
+router.get('/goodsSearchMax/:keyword', function (request, response, next) {
     const keyword = '%' + request.params.keyword + '%';
-    const sortCase = request.params.sortCase;
 
-    const order = sortCaseReplace(sortCase);
+    db.query(sql.search_goods_count, [keyword], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'search_error' });
+        }
+        response.json(results);
+    });
+})
 
-    db.query(sql.goods_searchlist + order, [keyword], function (error, results, fields) {
+// Main_상품 검색 리스트
+router.get('/goodsSearch/:keyword/:num', function (request, response, next) {
+    const keyword = '%' + request.params.keyword + '%';
+    const num = request.params.num;
+
+    db.query(sql.goods_searchlist, [keyword, num], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'search_error' });
