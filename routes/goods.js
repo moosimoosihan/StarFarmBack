@@ -802,6 +802,43 @@ router.get('/likeCount/:goodsno', function (request, response, next) {
     });
 });
 
+
+//좋아요 많은 메인상품
+router.get('/PopularProducts',function(request,response,next){
+    db.query(sql.main_popul_goods, function(error,results,fields){
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '에러' });
+        }
+        //결과가 있는지 확인 후 반환시킨다.
+        if(results.length > 0) {
+            return response.status(200).json(results);
+        }
+        else {
+            return response.status(200).json({ message: 'no item' });
+        }
+        
+    });
+});
+
+// 좋아요 많은 상품이 없을 경우 기본 상품
+router.get('/DefaultProducts',function(request,response,next){
+    db.query(sql.main_popul_empty_goods, function(error,results,fields){
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '에러' });
+        }
+        //결과가 있는지 확인 후 반환시킨다.
+        if(results.length > 0) {
+            return response.status(200).json(results);
+        }
+        else {
+            return response.status(200).json({ message: 'no item' });
+        }
+        
+    });
+});
+
 // 리뷰 작성
 router.post('/write_review/:goods_no', function (request, response, next) {
 

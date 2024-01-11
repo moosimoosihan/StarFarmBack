@@ -528,4 +528,16 @@ router.get('/report_count/:user_no', function (request, response, next) {
     });
 });
 
+// 신고정보 가져오기
+router.get('/admin/reportlist', function (request, response, next){
+    const user_no =request.params.user_no;
+    db.query(sql.report_userlist,[], function (error, results, fields){
+       if(error){
+           console.error(error);
+           return response.status(500).json({ error: '신고정보가져오기에러'});
+       }
+       response.json(results);
+    });
+});
+
 module.exports = router;

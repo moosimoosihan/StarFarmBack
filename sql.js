@@ -66,18 +66,19 @@ module.exports = {
                        WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0
                        ORDER BY goods_upload_date desc
                        limit ?, 10`,
-  get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no
+  get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no, goods_succ_price
                        FROM tb_goods
                        WHERE goods_no = ?`,
   get_goods_info_user: `SELECT g.goods_no, g.user_no, user_img, u.user_nick, u.user_fr, u.user_adr1
                        FROM tb_user u, tb_goods g
                        WHERE u.user_no = g.user_no`,
-  main_popul_goods: `select g.goods_no, g.goods_nm, count(l.goods_no)
-                    from tb_goods g, tb_like l
-                    where l.goods_no = g.goods_no and delete_time is null and goods_state = 0
-                    group by g.goods_no
-                    order by count(l.goods_no) desc
-                    limit 3`,
+    //메인페이지 찜카운트 전송
+   main_popul_goods: `select g.goods_no, g.goods_nm, count(l.goods_no), g.goods_img, g.goods_start_price, g.goods_timer
+                      from tb_goods g, tb_like l
+                      where l.goods_no = g.goods_no and delete_time is null and goods_state = 0
+                      group by g.goods_no
+                      order by count(l.goods_no) desc
+                      limit 3`,
   main_popul_empty_goods: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer
                             FROM tb_goods
                             WHERE delete_time IS NULL and goods_state = 0
