@@ -19,6 +19,14 @@ const upload = multer({
     }),
     limits: { fileSize: 5 * 1024 * 1024 },
 });
+// 이미지 등록 
+router.post('/upload_img', upload.single('img'), (request, response) => {
+    setTimeout(() => {
+        return response.status(200).json({
+            message: 'success'
+        })
+    }, 2000);
+})
 
 // 마이페이지
 router.get('/mypage/:user_no', function (request, response, next) {
@@ -133,7 +141,49 @@ router.post('/mypageupdate', function (request, response, next) {
                     console.error(error);
                     return response.status(500).json({ error: 'mypage_update_error' });
                 }
-                return response.status(200).json({ message: 'mypage_update' });
+                if(user.user_img == '') {
+                    return response.status(200).json({
+                        message: 'mypage_update'
+                    })
+                } else {
+                    try {
+                        const filename = user.user_no
+
+                        const pastDir = `${__dirname}` + `/../uploads/` + user.user_img;
+                        const newDir = `${__dirname}` + `/../uploads/userImg/${filename}`;
+                        const extension = user.user_img.substring(user.user_img.lastIndexOf('.'))
+                        
+                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+
+                        fs.rename(pastDir, newDir+ '/' + filename + extension, (err) => {
+                            if (err) {
+                                throw err;
+                            }
+                        });
+
+                        // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
+                        db.query(sql.add_user_img, [filename+extension, filename], function (error, results, fields) {
+                            if (error) {
+                                throw error;
+                            }
+                            else {
+                                return response.status(200).json({
+                                    message: 'mypage_update'
+                                })
+                            }
+                        })
+                    }
+                    catch (err) {
+                        // 이미지 등록 실패
+                        // -> DB에서 미리 등록한 유저도 다시 제거하기
+                        db.query(sql.delete_user, [user.user_id], function (error, results, fields) {
+                            console.log(err);
+                            return response.status(200).json({
+                                message: 'image_add_fail'
+                            })
+                        })
+                    }
+                }
             });
         } else {
             return response.status(200).json({
