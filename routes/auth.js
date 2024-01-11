@@ -530,8 +530,7 @@ router.get('/report_count/:user_no', function (request, response, next) {
 
 // 신고정보 가져오기
 router.get('/admin/reportlist', function (request, response, next){
-    const user_no =request.params.user_no;
-    db.query(sql.report_userlist,[], function (error, results, fields){
+    db.query(sql.report_userlist, function (error, results, fields){
        if(error){
            console.error(error);
            return response.status(500).json({ error: '신고정보가져오기에러'});
@@ -539,5 +538,29 @@ router.get('/admin/reportlist', function (request, response, next){
        response.json(results);
     });
 });
+
+// 모든 신고 불러오기
+router.get('/admin/reportlistInfo', function (request, response, next) {
+    db.query(sql.report_list, function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '신고관리에러' });
+        }
+        response.json(results);
+    });
+})
+
+// 신고 정보 불러오기
+router.get('/admin/reportInfo/:report_no', function (request, response, next) {
+    const report_no = request.params.report_no;
+
+    db.query(sql.report_info, [report_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '신고정보가져오기에러' });
+        }
+        response.json(results);
+    });
+})
 
 module.exports = router;

@@ -71,7 +71,6 @@ router.post('/add_goods', function (request, response) {
                                     console.error(error);
                                     return response.status(500).json({ error: 'DB 에러' });
                                 }
-                                console.log(results)
                                 if(results[0].succ_bid!=null){
                                     var goods_succ_bid = results[0].succ_bid;
                                     var goods_no = results[0].goods_no;
