@@ -1031,12 +1031,24 @@ router.get('/getUserNo/:goods_no', function (request, response, next) {
     })
 })
 
+router.get('/allGoodsPage/:num', function (request, response, next) {
+    const num = parseInt(request.params.num) * 10
+
+    db.query(sql.all_goods_page, [num], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: 'DB 에러' });
+        }
+        return response.json(results);
+    })
+})
+
 router.get('/allGoods', function (request, response, next) {
 
     db.query(sql.all_goods, function (error, results, fields) {
         if (error) {
             console.error(error);
-            return response.status(500).json({ error: 'DB 에러'});
+            return response.status(500).json({ error:'DB 에러' });
         }
         return response.json(results);
     })

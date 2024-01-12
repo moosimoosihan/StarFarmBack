@@ -46,6 +46,7 @@ module.exports = {
   delete_goods_2: `DELETE FROM tb_goods WHERE goods_nm = ?`,
   get_img_nm: `SELECT goods_img, goods_content FROM tb_goods WHERE goods_no = ?`,
   all_goods: `SELECT * FROM tb_goods`,
+  all_goods_page: `SELECT * FROM tb_goods limit ?, 10`,
   goods_list: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer
                   FROM tb_goods
                   WHERE delete_time IS NULL and goods_state = 0
