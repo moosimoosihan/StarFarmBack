@@ -62,7 +62,7 @@ module.exports = {
                           FROM tb_goods
                           WHERE goods_category = ? and goods_categody_detail = ?
                           ORDER BY goods_upload_date desc`,
-  goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no
+  goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
                        FROM tb_goods
                        WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0
                        ORDER BY goods_upload_date desc
@@ -89,12 +89,12 @@ module.exports = {
   goods_comp : `UPDATE tb_goods SET goods_state = 2 WHERE goods_no = ?`,
   restore_goods : `UPDATE tb_goods SET delete_time = null WHERE goods_no = ?`,
   search_goods_count : `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0`,
-  search_category : `select goods_no, goods_nm, goods_img, GOODS_START_PRICE, goods_state, user_no
+  search_category : `select goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
                     from tb_goods
                     where goods_category = ? and DELETE_TIME is null and GOODS_STATE = 0
                     ORDER BY goods_upload_date desc
                     limit ?, 10`,
-  search_category_detail : `select goods_no, goods_nm, goods_img, GOODS_START_PRICE, goods_state, user_no
+  search_category_detail : `select goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
                             from tb_goods
                             where goods_category = ? and GOODS_CATEGORY_DETAIL = ? and DELETE_TIME is null and GOODS_STATE = 0
                             ORDER BY goods_upload_date desc
