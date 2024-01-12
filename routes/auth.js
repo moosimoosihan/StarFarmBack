@@ -122,7 +122,6 @@ router.post('/naverlogin', function (request, response) {
 
 // 아이디 체크
 router.post('/id_check', function (request, response) {
-    console.log(request.body);
     db.query(sql.id_check, [request.body.user_id], function (error, results, fields) {
         if(error) {
             return response.status(500).json({
@@ -143,7 +142,6 @@ router.post('/id_check', function (request, response) {
 })
 // 전화번호 체크
 router.post('/mobile_check', function (request, response) {
-    console.log(request.body);
     db.query(sql.mobile_check, [request.body.user_mobile], function (error, results, fields) {
         if(error) {
             return response.status(500).json({
