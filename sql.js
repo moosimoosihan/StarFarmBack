@@ -116,15 +116,12 @@ module.exports = {
   goods_succ_bid_update: `UPDATE tb_goods SET goods_succ_price = ?, goods_state = ? WHERE goods_no = ?`,
 //-------------------------------------------------------------------------------------------
   order_payment: `INSERT INTO tb_order
-                     (order_receive_nm, order_mobile, order_addr1, order_addr2, order_zipcode, order_content, user_no)
-                     VALUES (?,?,?,?,?,?,?)`,
+                     (order_receive_nm, order_mobile, order_addr1, order_addr2, order_zipcode, order_content, goods_no, user_no)
+                     VALUES (?,?,?,?,?,?,?,?)`,
   order_payment_no : `SELECT order_no FROM tb_order WHERE user_no = ? ORDER BY order_no DESC LIMIT 1`,
   order_info : `SELECT * FROM tb_order WHERE order_no = ?`,
-  /* orderlist: `SELECT od.*, o.ORDER_STATUS, o.ORDER_CREATE_DT, o.ORDER_TP
-                  FROM tb_order_detail od
-                  JOIN tb_order o ON od.ORDER_TRADE_NO = o.ORDER_TRADE_NO
-                  WHERE o.user_no =?`,
-  orderlist_detail: `SELECT * FROM tb_order WHERE ORDER_TRADE_NO = ?`,
+  get_order_list: `SELECT * FROM tb_order WHERE user_no = ?`,
+  /* orderlist_detail: `SELECT * FROM tb_order WHERE ORDER_TRADE_NO = ?`,
   confirm_point: `UPDATE TB_USER
                     SET user_point = user_point + (SELECT (ORDER_TOTAL * 0.03) FROM TB_ORDER WHERE ORDER_TRADE_NO = ?)
                     WHERE user_no = ?`,

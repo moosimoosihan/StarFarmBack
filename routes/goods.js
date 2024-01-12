@@ -462,7 +462,7 @@ router.post('/orderPayment', function (request, response, next) {
 
     console.log(order);
 
-    db.query(sql.order_payment, [order.order_receive_nm, order.order_mobile, order.order_addr1, order.order_addr2, order.order_zipcode, order.order_content, order.user_no],
+    db.query(sql.order_payment, [order.order_receive_nm, order.order_mobile, order.order_addr1, order.order_addr2, order.order_zipcode, order.order_content, order.goods_no, order.user_no],
         function (error, results, fields) {
             if (error) {
                 return response.status(500).json({
@@ -574,7 +574,7 @@ router.post('/orderPayment', function (request, response, next) {
 router.get('/orderlist/:userno', function (request, response, next) {
 
     const userno = request.params.userno;
-    db.query(sql.orderlist, [userno], function (error, results, fields) {
+    db.query(sql.get_order_list, [userno], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '결제리스트에러' });
