@@ -98,10 +98,8 @@ router.post('/add_goods', function (request, response) {
                             console.log('스케줄링 성공');
                         });
                     })
-                    .then(() => {
-                        return response.status(200).json({
-                            message: 'add_complete'
-                        })
+                    return response.status(200).json({
+                        message: 'add_complete'
                     })
                 })
             }

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const checkAuction = require('./checkAuction');
+const checkUser = require('./checkUser');
 const cserver = require('http').createServer(app); // http 서버 생성
 const aserver = require('http').createServer(app); // http 서버 생성
 const cio = require('socket.io')(cserver, {
@@ -61,6 +62,7 @@ app.use('/goods', goodsRouter);
 app.use('/mypage', mypageRouter);
 app.use('/chat', chatRouter);
 checkAuction();
+checkUser();
 app.listen(3000, function() {
     console.log('Server Running at http://localhost:3000');
 });

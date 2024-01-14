@@ -71,9 +71,10 @@ module.exports = {
   get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no, goods_succ_price
                        FROM tb_goods
                        WHERE goods_no = ?`,
-  get_goods_info_user: `SELECT g.goods_no, g.user_no, user_img, u.user_nick, u.user_fr, u.user_adr1
-                       FROM tb_user u, tb_goods g
-                       WHERE u.user_no = g.user_no`,
+  // 상품 상세페이지 유저 정보 가져오기 tb_goods tb_user 조인
+  get_goods_info_user: `SELECT u.user_nick, u.user_img, u.user_no, u.user_fr, u.user_adr1
+                        FROM tb_goods g, tb_user u
+                        WHERE g.goods_no = ? and g.user_no = u.user_no`,
     //메인페이지 찜카운트 전송
    main_popul_goods: `select g.goods_no, g.goods_nm, count(l.goods_no), g.goods_img, g.goods_start_price, g.goods_timer
                       from tb_goods g, tb_like l
@@ -153,9 +154,10 @@ module.exports = {
                     where g.goods_no = b.goods_no and b.user_no = ?
                     group by g.goods_no`,
   mypage_saleList: `select * from tb_goods where delete_time is null and user_no = ?`,
-  mypage_likeList: `select l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no, u.user_nick
-                    from tb_like l, tb_goods g, tb_user u
-                    where l.user_no = ? and l.goods_no = g.goods_no`,
+  mypage_likeList: `select l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no
+                    from tb_like l, tb_goods g
+                    where l.user_no = ? and l.goods_no = g.goods_no
+                    order by g.goods_upload_date desc`,
   mypage_review: `select g.user_no, g.goods_img, u.user_nick, r.review_con, r.review_score, r.review_create_dt, g.goods_no, g.goods_nm
                   from tb_review r, tb_goods g, tb_user u
                   where r.user_no = ? and r.goods_no = g.goods_no and r.sell_user_no = u.user_no`,
@@ -196,10 +198,6 @@ module.exports = {
   like_delete: `DELETE FROM tb_like WHERE user_no = ? AND goods_no = ?`,
   like_check: `SELECT * FROM tb_like WHERE user_no = ? AND goods_no = ?`,
   like_count: `SELECT COUNT(*) FROM tb_like WHERE goods_no = ?`,
-  like_list: `SELECT l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no
-              FROM tb_like l, tb_goods g
-              WHERE l.user_no = ? and l.goods_no = g.goods_no`,
-
 
   //qna게시판
   /* content: `SELECT * FROM tb_qna JOIN tb_user 
@@ -248,4 +246,40 @@ module.exports = {
   chat_room_in2 : `UPDATE TB_CHATROOM SET CHATROOM_OUT2 = 0 WHERE CHATROOM_NO = ?`,
   chat_room_out1 : `UPDATE TB_CHATROOM SET CHATROOM_OUT1 = 1 WHERE CHATROOM_NO = ?`,
   chat_room_out2 : `UPDATE TB_CHATROOM SET CHATROOM_OUT2 = 1 WHERE CHATROOM_NO = ?`,
+
+  // 유저 삭제시 필요한 삭제 쿼리 유저 테이블의 delete_time을 한달 뒤로 설정
+  delete_user_month: `UPDATE tb_user SET user_delete = DATE_ADD(NOW(), INTERVAL 1 MONTH) WHERE user_no = ?`,
+  // tb_order 테이블 삭제
+  delete_order: `DELETE FROM tb_order WHERE user_no = ?`,
+  // tb_like 테이블 삭제
+  delete_like: `DELETE FROM tb_like WHERE user_no = ?`,
+  // tb_chat 테이블 삭제
+  delete_chat: `DELETE FROM tb_chat WHERE chat_user = ?`,
+  // tb_chatroom 테이블 삭제
+  delete_chatroom: `DELETE FROM tb_chatroom WHERE CHATROOM_USER1 = ? or CHATROOM_USER2 = ?`,
+  // tb_review 테이블 삭제
+  delete_review: `DELETE FROM tb_review WHERE user_no = ?`,
+  // tb_report 테이블 삭제
+  delete_report_2: `DELETE FROM tb_report WHERE user_no = ?`,
+  // tb_bid 테이블 삭제
+  delete_bid: `DELETE FROM tb_bid WHERE user_no = ?`,
+  // tb_goods 테이블 삭제
+  delete_goods_3: `DELETE FROM tb_goods WHERE user_no = ?`,
+  // tb_user 테이블 삭제
+  delete_user2: `DELETE FROM tb_user WHERE user_no = ?`,
+
+  // 상품 이미지를 삭제하기 위하여 상품 번호를 가져옴
+  get_goods_no_2: `SELECT goods_no FROM tb_goods WHERE user_no = ?`,
+
+  // 신고 이미지를 삭제하기 위하여 신고 번호를 가져옴
+  get_report_no_2 : `SELECT report_no FROM tb_report WHERE user_no = ?`,
+
+  // 삭제 기간이 지난 유저들을 가져옴
+  getExpiredUsers : `SELECT user_no FROM tb_user WHERE user_delete <= now()`,
+
+  // 삭제 기간이 존재하고 지나지 않은 유저들을 가져옴
+  getNotExpiredUsers : `SELECT user_no, user_delete FROM tb_user WHERE user_delete > now()`,
+
+  // 해당 유저의 삭제 기간을 가져옴
+  delete_check : `SELECT user_delete FROM tb_user WHERE user_id = ?`,
 }

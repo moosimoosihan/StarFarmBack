@@ -280,21 +280,30 @@ router.post('/login_process', function (request, response) {
                         message: 'ban'
                     })
                 } else {
-                    db.query(sql.login, [loginUser.user_id], function (error, results, fields) {
-                        const same = bcrypt.compareSync(loginUser.user_pw, results[0].user_pw);
-
-                        if (same) {
-                            // ID에 저장된 pw 값과 입력한 pw값이 동일한 경우
-                            db.query(sql.get_user_no, [loginUser.user_id], function (error, results, fields) {
-                                return response.status(200).json({
-                                    message: results[0].user_no
-                                })
-                            })
-                        }
-                        else {
-                            // 비밀번호 불일치
+                    db.query(sql.delete_check, [loginUser.user_id], function (error, results, fields) {
+                        if (results[0].user_delete != null) {
+                            // 탈퇴한 회원
                             return response.status(200).json({
-                                message: 'incorrect_pw'
+                                message: 'deleted',
+                                date: results[0].user_delete
+                            })
+                        } else {
+                            db.query(sql.login, [loginUser.user_id], function (error, results, fields) {
+                                const same = bcrypt.compareSync(loginUser.user_pw, results[0].user_pw);
+
+                                if (same) {
+                                    // ID에 저장된 pw 값과 입력한 pw값이 동일한 경우
+                                    db.query(sql.get_user_no, [loginUser.user_id], function (error, results, fields) {
+                                        return response.status(200).json({
+                                            message: results[0].user_no
+                                        })
+                                    })
+                                } else {
+                                    // 비밀번호 불일치
+                                    return response.status(200).json({
+                                        message: 'incorrect_pw'
+                                    })
+                                }
                             })
                         }
                     })
