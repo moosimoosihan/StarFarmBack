@@ -115,6 +115,14 @@ module.exports = {
                  limit 1`,
   goods_succ_price: `UPDATE tb_goods SET goods_succ_price = ? WHERE goods_no = ?`,
   goods_succ_bid_update: `UPDATE tb_goods SET goods_succ_price = ?, goods_state = ? WHERE goods_no = ?`,
+  // 경매 종료 시간이 지난 상품과 입찰 정보를 가져옴 tb_goods
+  getExpiredGoods: `SELECT goods_no, goods_timer
+                    FROM tb_goods
+                    WHERE goods_timer < now() and goods_state = 0`,
+  // 경매가 아직 진행중인 상품들을 가져옴 tb_goods
+  getGoodsList : `SELECT goods_no, goods_timer
+                  FROM tb_goods
+                  WHERE goods_state = 0 and delete_time is null and goods_timer > now()`,
 //-------------------------------------------------------------------------------------------
   order_payment: `INSERT INTO tb_order
                      (order_receive_nm, order_mobile, order_addr1, order_addr2, order_zipcode, order_content, goods_no, user_no)

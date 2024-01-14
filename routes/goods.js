@@ -74,7 +74,6 @@ router.post('/add_goods', function (request, response) {
                                 if(results[0].succ_bid!=null){
                                     var goods_succ_bid = results[0].succ_bid;
                                     var goods_no = results[0].goods_no;
-                                    var goods_state = results[0].goods_state;
                                     db.query(sql.goods_succ_bid_update, [goods_succ_bid, 1, goods_no], function (error, results, fields) {
                                         if(error) {
                                             console.error(error);
@@ -90,7 +89,6 @@ router.post('/add_goods', function (request, response) {
                                         }
                                     })
                                 }
-
                             })
                         })
                         job.on('error', (err) => {
@@ -99,11 +97,13 @@ router.post('/add_goods', function (request, response) {
                         job.on('success', () => {
                             console.log('스케줄링 성공');
                         });
+                    })
+                    .then(() => {
                         return response.status(200).json({
                             message: 'add_complete'
                         })
                     })
-                })   
+                })
             }
             catch (err) {
                 // 이미지 등록 실패
