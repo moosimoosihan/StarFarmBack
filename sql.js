@@ -165,7 +165,7 @@ module.exports = {
   get_comment: `SELECT c.CHAT_CONTENT FROM TB_CHAT c, TB_CHATROOM r WHERE c.CHATROOM_NO = ? ORDER BY c.CHAT_DATE DESC LIMIT 1`,
   mypage_like_list2: `SELECT l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no
                       FROM tb_like l, tb_goods g
-                      WHERE l.user_no = 1 and l.goods_no = g.goods_no
+                      WHERE l.user_no = ? and l.goods_no = g.goods_no
                       ORDER BY g.goods_upload_date DESC limit 4`,
   mypage_orderList2: `select g.goods_no, g.goods_nm, g.goods_start_price, g.goods_img, max(b.bid_amount) as bid_amount, b.goods_no, b.user_no, g.goods_state, g.goods_timer
                     from tb_goods g, tb_bid b
