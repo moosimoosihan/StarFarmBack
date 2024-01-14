@@ -215,6 +215,14 @@ module.exports = async () => {
                             return response.status(500).json({ error: '리뷰에러' });
                         }
                     })
+
+                    // TB_REVIEW 테이블에서 해당 유저에게 쓴 리뷰 삭제
+                    db.query(sql.delete_review_2, [user_no], function (error, results, fields) {
+                        if (error) {
+                            console.error(error);
+                            return response.status(500).json({ error: '리뷰에러' });
+                        }
+                    })
         
                     // TB_REPORT 테이블에서 해당 유저의 신고 내역을 삭제하기 전 해당 신고 내역의 상품 번호를 가져와 해당 번호의 폴더들을 삭제
                     db.query(sql.get_report_no_2, [user_no], function (error, results, fields) {
@@ -279,9 +287,16 @@ module.exports = async () => {
                                     });
                                 });
                             }
+                            // 해당 상품의 모든 입찰 내역도 같이 삭제
+                            db.query(sql.delete_bid_2, [results[i].goods_no], function (error, results, fields) {
+                                if (error) {
+                                    console.error(error);
+                                    return response.status(500).json({ error: '입찰내역에러' });
+                                }
+                            })
                         }
                     })
-        
+                            
                     // TB_GOODS 테이블에서 해당 유저의 상품 삭제
                     db.query(sql.delete_goods_3, [user_no], function (error, results, fields) {
                         if (error) {

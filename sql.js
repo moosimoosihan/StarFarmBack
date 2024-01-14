@@ -282,4 +282,10 @@ module.exports = {
 
   // 해당 유저의 삭제 기간을 가져옴
   delete_check : `SELECT user_delete FROM tb_user WHERE user_id = ?`,
+
+  // 해당 유저에게 쓴 리뷰 삭제
+  delete_review_2 : `DELETE FROM tb_review WHERE SELL_USER_NO = ?`,
+
+  // 해당 상품의 입찰내역도 모두 삭제
+  delete_bid_2 : `DELETE FROM tb_bid WHERE goods_no = ?`,
 }
