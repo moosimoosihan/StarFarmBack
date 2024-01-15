@@ -24,7 +24,7 @@ module.exports = {
                     WHERE user_tp = 0 and r.report_user_no = u.user_no
                     GROUP BY u.user_no`,
   ban_update_user: `UPDATE tb_user SET user_ban = ? where user_no = ?`,
-  report_list: `SELECT * FROM tb_report`,
+  report_list: `SELECT REPORT_TITLE, REPORT_DATE, REPORT_NO, REPORT_IMG, REPORT_CATEGORY, REPORT_CONTENT, USER_NO, REPORT_USER_NO FROM tb_report`,
   report_info: `SELECT * FROM tb_report WHERE report_no = ?`,
   
   admin_orderlist: `SELECT g.goods_no, g.goods_nm, MAX(b.bid_amount), g.goods_state, g.goods_category, g.user_no, b.user_no, b.goods_no
@@ -35,7 +35,7 @@ module.exports = {
                             SET ORDER_STATUS = ?
                             WHERE ORDER_TRADE_NO IN (?)`, */
   delete_user: `DELETE FROM tb_user WHERE user_id = ?`,
-  userlist: `SELECT * FROM tb_user WHERE user_tp = 0`,
+  userlist: `SELECT USER_NO, USER_ID, USER_NICK, USER_EMAIL, USER_BAN, USER_CREATE_DT FROM tb_user WHERE user_tp = 0`,
 
   // goods
   goods_add: `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, goods_timer, user_no) VALUES (?,?,?,?,?,?,?,?,?)`,
@@ -65,9 +65,7 @@ module.exports = {
                           ORDER BY goods_upload_date desc`,
   goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
                        FROM tb_goods
-                       WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0
-                       ORDER BY goods_upload_date desc
-                       limit ?, 10`,
+                       WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0`,
   get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no, goods_succ_price
                        FROM tb_goods
                        WHERE goods_no = ?`,
@@ -93,14 +91,10 @@ module.exports = {
   search_goods_count : `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0`,
   search_category : `select goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
                     from tb_goods
-                    where goods_category = ? and DELETE_TIME is null and GOODS_STATE = 0
-                    ORDER BY goods_upload_date desc
-                    limit ?, 10`,
+                    where goods_category = ? and DELETE_TIME is null and GOODS_STATE = 0`,
   search_category_detail : `select goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
                             from tb_goods
-                            where goods_category = ? and GOODS_CATEGORY_DETAIL = ? and DELETE_TIME is null and GOODS_STATE = 0
-                            ORDER BY goods_upload_date desc
-                            limit ?, 10`,
+                            where goods_category = ? and GOODS_CATEGORY_DETAIL = ? and DELETE_TIME is null and GOODS_STATE = 0`,
   search_category_count: `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_category = ? and delete_time is null and goods_state = 0`,
   search_category_detail_count: `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_category = ? and goods_category_detail = ? and delete_time is null and goods_state = 0`,
 
@@ -219,15 +213,24 @@ module.exports = {
 
   // 리뷰
   review_write: `INSERT INTO tb_review (review_con, user_no, goods_no, sell_user_no, review_score) VALUES (?, ?, ?, ?, ?)`,
-  get_review_info: `select g.goods_img, g.goods_no, g.goods_nm, u.user_img, u.user_nick, u.user_no
-                        from tb_goods g, tb_user u
-                        where g.goods_no = ? and g.user_no = u.user_no`,
+
+  // 리뷰를 작성하기 위해 상품 정보 판매자 정보를 가져옴
+  get_review_info: `SELECT g.goods_nm, g.goods_img, u.user_nick, u.user_img, u.user_no, g.goods_no
+                    FROM tb_goods g, tb_user u
+                    WHERE g.goods_no = ? and g.user_no = u.user_no`,
   get_my_review: `SELECT * 
                     FROM tb_review 
                     WHERE user_no = ? `,
   get_seller_review: `SELECT *
                       FROM tb_review
                       WHERE sell_user_no = ?`,
+  review_count : `SELECT COUNT(*) as count FROM tb_review WHERE goods_no = ? and user_no = ?`,
+  get_review_count : `SELECT COUNT(*) as count FROM tb_review WHERE goods_no = ? and sell_user_no = ?`,
+  // 판매자가 구매자에게 리뷰를 쓸 경우 필요한 정보를 가져옴 구매자의 정보는 tb_bid에서 최고 입찰자의 정보를 가져옴
+  get_sale_review_info: `SELECT g.goods_nm, g.goods_img, u.user_nick, u.user_img, u.user_no, g.goods_no
+                          FROM tb_goods g, tb_user u, tb_bid b
+                          WHERE g.goods_no = ? and b.user_no = u.user_no and b.goods_no = g.goods_no
+                          ORDER BY b.bid_amount DESC LIMIT 1`,
 
   // 신고
   report : `INSERT INTO tb_report (report_title, report_category, report_content, report_user_no, user_no) VALUES (?,?,?,?,?)`,

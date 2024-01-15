@@ -333,16 +333,17 @@ router.post('/admin_check', function (request, response) {
 })
 
 // 회원리스트
-router.get('/admin/userlist/:keyword', function (request, response, next) {
+router.get('/admin/userlist/:keyword/:sort', function (request, response, next) {
 
     const keyword = request.params.keyword;
     let search = '';
+    const sort = ` ORDER BY USER_CREATE_DT ${request.params.sort}`;
 
     if (keyword != 'none') {
-        search = ' AND user_id Like "%' + keyword + '%" ';
+        search = ` AND user_id Like '%${keyword}%'`;
     }
-
-    db.query(sql.userlist + search, function (error, results, fields) {
+    
+    db.query(sql.userlist + search + sort, function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '회원리스트에러' });
@@ -547,12 +548,19 @@ router.get('/admin/reportlist', function (request, response, next){
 });
 
 // 모든 신고 불러오기
-router.get('/admin/reportlistInfo', function (request, response, next) {
-    db.query(sql.report_list, function (error, results, fields) {
+router.get('/admin/reportlistInfo/:keyword/:sort', function (request, response, next) {
+    const keyword = request.params.keyword;
+    let search = '';
+    if(keyword != 'none') {
+        search = ` WHERE REPORT_TITLE Like '%${keyword}%'`;
+    }
+    const sort = ` ORDER BY REPORT_DATE ${request.params.sort}`;
+    db.query(sql.report_list + search + sort, function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '신고관리에러' });
         }
+        console.log(results);
         response.json(results);
     });
 })

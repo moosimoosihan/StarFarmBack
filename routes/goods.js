@@ -290,11 +290,12 @@ router.get('/goodsSearchMax/:keyword', function (request, response, next) {
 })
 
 // Main_상품 검색 리스트
-router.get('/goodsSearch/:keyword/:num', function (request, response, next) {
+router.get('/goodsSearch/:keyword/:num/:sort', function (request, response, next) {
     const keyword = '%' + request.params.keyword + '%';
     const num = parseInt(request.params.num);
+    const sort = request.params.sort;
 
-    db.query(sql.goods_searchlist, [keyword, num], function (error, results, fields) {
+    db.query(sql.goods_searchlist + ` ORDER BY goods_upload_date `+ sort +` limit `+num+`, 10`, [keyword], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'search_error' });
@@ -304,11 +305,12 @@ router.get('/goodsSearch/:keyword/:num', function (request, response, next) {
 });
 
 // 카테고리 검색
-router.get('/category_search/:category/:num', function (request, response, next) {
+router.get('/category_search/:category/:num/:sort', function (request, response, next) {
     const category = request.params.category;
     const num = parseInt(request.params.num);
+    const sort = request.params.sort;
 
-    db.query(sql.search_category, [category, num], function (error, results, fields) {
+    db.query(sql.search_category + ` ORDER BY goods_upload_date `+ sort +` limit `+num+`, 10`, [category], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'search_error' });
@@ -318,12 +320,13 @@ router.get('/category_search/:category/:num', function (request, response, next)
 })
 
 // 카테고리 디테일 검색
-router.get('/category_detail_search/:category/:category_detail/:num', function (request, response, next) {
+router.get('/category_detail_search/:category/:category_detail/:num/:sort', function (request, response, next) {
     const category = request.params.category;
     const category_detail = request.params.category_detail;
     const num = parseInt(request.params.num);
+    const sort = request.params.sort;
 
-    db.query(sql.search_category_detail, [category, category_detail, num], function (error, results, fields) {
+    db.query(sql.search_category_detail + ` ORDER BY goods_upload_date `+ sort +` limit `+num+`, 10`, [category, category_detail], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'search_error' });
@@ -877,6 +880,19 @@ router.get('/write_review_info/:goods_no', function (request, response, next) {
     })
 })
 
+// 판매자가 리뷰를 작성할때 리뷰 상품 정보와 구매자의 정보를 가져온다.
+router.get('/sale_write_review_info/:goods_no', function (request, response, next) {
+        const goods_no = request.params.goods_no;
+    
+        db.query(sql.get_sale_review_info, [goods_no], function (error, results, fields) {
+            if(error) {
+                console.error(error);
+                return response.status(500).json({ error: 'error' });
+            }
+            return response.json(results);
+        })
+})
+
 // 상품 상세 페이지 리뷰 리스트 불러오기
 router.get('/getReview/:goodsno', function (request, response, next) {
     const goods_no = request.params.goodsno;
@@ -1081,5 +1097,31 @@ router.get('/orderInfo/:orderno', function (request, response, next) {
         response.json(results);
     });
 });
+
+router.get('/reviewCount/:goods_no/:user_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+    const user_no = request.params.user_no;
+
+    db.query(sql.review_count, [goods_no, user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error:'DB 에러' });
+        }
+        return response.json(results);
+    })
+})
+
+router.get('/getReviewCount/:goods_no/:user_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+    const user_no = request.params.user_no;
+
+    db.query(sql.get_review_count, [goods_no, user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error:'DB 에러' });
+        }
+        return response.json(results);
+    })
+})
 
 module.exports = router;
