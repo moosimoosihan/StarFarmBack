@@ -169,7 +169,7 @@ module.exports = {
   mypage_saleList2: `select * from tb_goods where delete_time is null and user_no = ? order by goods_upload_date desc limit 4`,
 
   //유저페이지
-  get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no
+  get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no, goods_timer
                     FROM tb_goods
                     WHERE user_no = ?`,
   get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r.review_create_dt, g.goods_no, g.goods_img, g.goods_nm, u.user_nick
