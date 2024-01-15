@@ -1125,4 +1125,17 @@ router.get('/getReviewCount/:goods_no/:user_no', function (request, response, ne
     })
 })
 
+router.get('/orderCount/:goods_no/:user_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+    const user_no = request.params.user_no;
+
+    db.query(sql.order_count, [goods_no, user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error:'DB 에러' });
+        }
+        return response.json(results);
+    })
+})
+
 module.exports = router;

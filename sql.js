@@ -125,6 +125,7 @@ module.exports = {
   order_payment_no : `SELECT order_no FROM tb_order WHERE user_no = ? ORDER BY order_no DESC LIMIT 1`,
   order_info : `SELECT * FROM tb_order WHERE order_no = ?`,
   get_order_list: `SELECT * FROM tb_order WHERE user_no = ?`,
+  order_count : `SELECT COUNT(*) as count FROM tb_order WHERE goods_no = ? and user_no = ?`,
   /* orderlist_detail: `SELECT * FROM tb_order WHERE ORDER_TRADE_NO = ?`,
   confirm_point: `UPDATE TB_USER
                     SET user_point = user_point + (SELECT (ORDER_TOTAL * 0.03) FROM TB_ORDER WHERE ORDER_TRADE_NO = ?)
