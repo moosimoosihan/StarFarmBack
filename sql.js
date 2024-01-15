@@ -66,7 +66,7 @@ module.exports = {
   goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
                        FROM tb_goods
                        WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0`,
-  get_goods_info: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no, goods_succ_price
+  get_goods_info: `SELECT goods_no, goods_category, goods_category_detail, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no, goods_succ_price
                        FROM tb_goods
                        WHERE goods_no = ?`,
   // 상품 상세페이지 유저 정보 가져오기 tb_goods tb_user 조인
