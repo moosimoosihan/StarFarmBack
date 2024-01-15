@@ -139,7 +139,7 @@ router.post('/upload_img', upload.single('img'), (request, response) => {
         return response.status(200).json({
             message: 'success'
         })
-    }, 2000);
+    }, 5000);
 })
 
 // 이미지 제거
