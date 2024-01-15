@@ -467,7 +467,6 @@ router.post('/report', function (request, response, next) {
     const report = request.body;
     try{
         db.query(sql.report, [report.report_title, report.report_category, report.report_content, report.report_user_no, report.user_no], function (error, results, fields) {
-            console.log("img : "+report.report_img);
             if (error) {
                 console.error(error);
                 return response.status(500).json({ error: 'report error' });
@@ -481,7 +480,6 @@ router.post('/report', function (request, response, next) {
                     // 신고 번호 불러오기
                     db.query(sql.get_report_no, [report.report_user_no, report.user_no], function (error, results, fields) {
                         const filename = results[0].report_no
-                        console.log(filename);
         
                         const pastDir = `${__dirname}` + `/../uploads/` + report.report_img;
                         const newDir = `${__dirname}` + `/../uploads/reportImg/${filename}`;
@@ -576,6 +574,23 @@ router.get('/admin/reportInfo/:report_no', function (request, response, next) {
         }
         response.json(results);
     });
+})
+
+// 이미지 제거
+router.post('/delete_img', (request, response) => {
+
+    const pastname = request.body.pastname;
+    try {
+        if (pastname != "" && fs.existsSync(path.normalize(`${__dirname}../../uploads/${pastname}`))) {
+            fs.unlinkSync(path.normalize(`${__dirname}../../uploads/${pastname}`))
+        }
+        return response.status(200).json({
+            message: 'success'
+        })
+    }
+    catch (error) {
+        console.log(error)
+    }
 })
 
 module.exports = router;

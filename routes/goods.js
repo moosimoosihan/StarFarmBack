@@ -139,7 +139,7 @@ router.post('/upload_img', upload.single('img'), (request, response) => {
         return response.status(200).json({
             message: 'success'
         })
-    }, 5000);
+    }, 2000);
 })
 
 // 이미지 제거
@@ -150,6 +150,9 @@ router.post('/delete_img', (request, response) => {
         if (pastname != "" && fs.existsSync(path.normalize(`${__dirname}../../uploads/${pastname}`))) {
             fs.unlinkSync(path.normalize(`${__dirname}../../uploads/${pastname}`))
         }
+        return response.status(200).json({
+            message: 'success'
+        })
     }
     catch (error) {
         console.log(error)
@@ -460,8 +463,6 @@ router.post('/saleComp/:id', function (request, response, next) {
 // 상품 결제 
 router.post('/orderPayment', function (request, response, next) {
     const order = request.body;
-
-    console.log(order);
 
     db.query(sql.order_payment, [order.order_receive_nm, order.order_mobile, order.order_addr1, order.order_addr2, order.order_zipcode, order.order_content, order.goods_no, order.user_no],
         function (error, results, fields) {
