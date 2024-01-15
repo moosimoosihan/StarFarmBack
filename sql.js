@@ -171,7 +171,8 @@ module.exports = {
   //유저페이지
   get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no, goods_timer
                     FROM tb_goods
-                    WHERE user_no = ?`,
+                    WHERE user_no = ?
+                    limit 0 , 10`,
   get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r.review_create_dt, g.goods_no, g.goods_img, g.goods_nm, u.user_nick
                     FROM tb_review r, tb_goods g, tb_user u
                     WHERE r.sell_user_no = ? and u.user_no = r.user_no
