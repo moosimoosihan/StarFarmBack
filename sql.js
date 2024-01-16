@@ -252,6 +252,8 @@ module.exports = {
   chat_room_in2 : `UPDATE TB_CHATROOM SET CHATROOM_OUT2 = 0 WHERE CHATROOM_NO = ?`,
   chat_room_out1 : `UPDATE TB_CHATROOM SET CHATROOM_OUT1 = 1 WHERE CHATROOM_NO = ?`,
   chat_room_out2 : `UPDATE TB_CHATROOM SET CHATROOM_OUT2 = 1 WHERE CHATROOM_NO = ?`,
+  delete_chatroom_chat : `DELETE FROM TB_CHAT WHERE CHATROOM_NO = ?`,
+  delete_chat_room : `DELETE FROM TB_CHATROOM WHERE CHATROOM_NO = ?`,
 
   // 유저 삭제시 필요한 삭제 쿼리 유저 테이블의 delete_time을 한달 뒤로 설정
   delete_user_month: `UPDATE tb_user SET user_delete = DATE_ADD(NOW(), INTERVAL 1 MONTH) WHERE user_no = ?`,

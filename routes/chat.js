@@ -83,6 +83,22 @@ router.post('/outChatRoom', function(request, response) {
 
     db.query(sql.get_room, [chat_room_no], function(error, results, fields){
         if(results[0].CHATROOM_USER1===user_no && results[0].CHATROOM_OUT1===0) {
+            if(results[0].CHATROOM_OUT2===1) {
+                // 둘 다 나갔을 경우 채팅내역 삭제 및 채팅방 삭제
+                db.query(sql.delete_chatroom_chat, [chat_room_no], function(error, result, fields){
+                    if(error){
+                        console.log(error);
+                        response.status(500).send('Internal Server Error');
+                    }
+                    db.query(sql.delete_chat_room, [chat_room_no], function(error, result, fields){
+                        if(error){
+                            console.log(error);
+                            response.status(500).send('Internal Server Error');
+                        }
+                    })
+                })
+                return response.status(200).json({message:'success'})
+            }
             db.query(sql.chat_room_out1, [chat_room_no], function(error, result, fields){
                 if(error){
                     console.log(error);
@@ -90,6 +106,22 @@ router.post('/outChatRoom', function(request, response) {
                 }
             })
         } else if(results[0].CHATROOM_USER2===user_no && results[0].CHATROOM_OUT2===0) {
+            if(results[0].CHATROOM_OUT1===1) {
+                // 둘 다 나갔을 경우 채팅내역 삭제 및 채팅방 삭제
+                db.query(sql.delete_chat, [chat_room_no], function(error, result, fields){
+                    if(error){
+                        console.log(error);
+                        response.status(500).send('Internal Server Error');
+                    }
+                    db.query(sql.delete_chat_room, [chat_room_no], function(error, result, fields){
+                        if(error){
+                            console.log(error);
+                            response.status(500).send('Internal Server Error');
+                        }
+                    })
+                })
+                return response.status(200).json({message:'success'})
+            }
             db.query(sql.chat_room_out2, [chat_room_no], function(error, result, fields){
                 if(error){
                     console.log(error);
