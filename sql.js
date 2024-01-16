@@ -49,7 +49,7 @@ module.exports = {
                   FROM tb_goods
                   WHERE delete_time IS NULL and goods_state = 0
                   ORDER BY goods_upload_date desc
-                  limit 10`,
+                  limit 8`,
   update_goods: `UPDATE tb_goods
                 SET goods_nm = ?, goods_category = ?, goods_category_detail = ?, goods_start_price = ?, goods_timer = ?, goods_content = ?
                 WHERE goods_no = ?`,
@@ -149,10 +149,10 @@ module.exports = {
                     from tb_goods g, tb_bid b
                     where g.goods_no = b.goods_no and b.user_no = ?`,
   mypage_saleList: `select * from tb_goods where delete_time is null and user_no = ?`,
-  mypage_likeList: `select l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no
+  mypage_likeList: `select l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no, g.goods_state
                     from tb_like l, tb_goods g
-                    where l.user_no = ? and l.goods_no = g.goods_no
-                    order by g.goods_upload_date desc`,
+                    where l.user_no = ? and l.goods_no = g.goods_no`,
+  mypage_likeList_count: `select count(*) as count from tb_like where user_no = ?`,
   mypage_review: `select g.user_no, g.goods_img, u.user_nick, r.review_con, r.review_score, r.review_create_dt, g.goods_no, g.goods_nm
                   from tb_review r, tb_goods g, tb_user u
                   where r.user_no = ? and r.goods_no = g.goods_no and r.sell_user_no = u.user_no`,

@@ -134,10 +134,24 @@ router.get('/salelistCount/:user_no/:sort', function (request, response, next) {
 })
 
 // 관심 상품 리스트
-router.get('/likelist/:user_no', function (request, response, next) {
+router.get('/likelist/:user_no/:sort/:num', function (request, response, next) {
     const user_no = request.params.user_no;
+    var sort = request.params.sort;
+    if(sort=='none'){
+        sort = ' order by g.goods_upload_date desc'
+    } else if(sort=='0'){
+        sort = ` and goods_state = 0 order by g.goods_upload_date desc`
+    } else if(sort=='1'){
+        sort = ` and goods_state = 1 order by g.goods_upload_date desc`
+    } else if(sort=='2') {
+        sort = ` and goods_state = 2 order by g.goods_upload_date desc`
+    } else {
+        sort = ` and goods_state = 3 order by g.goods_upload_date desc`
+    }
+    const num = ` limit ${request.params.num*10}, 10`;
 
-    db.query(sql.mypage_likeList, [user_no], function (error, results, fields) {
+
+    db.query(sql.mypage_likeList + sort + num, [user_no], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '회원에러' });
@@ -145,6 +159,31 @@ router.get('/likelist/:user_no', function (request, response, next) {
         response.json(results);
     });
 });
+
+// 마이페이지 찜 상품 총 갯수
+router.get('/likecount/:user_no/:sort', function (request, response, next) {
+    const user_no = request.params.user_no;
+    var sort = request.params.sort;
+    if(sort=='none'){
+        sort = ''
+    } else if(sort=='0'){
+        sort = ` and goods_state = 0`
+    } else if(sort=='1'){
+        sort = ` and goods_state = 1`
+    } else if(sort=='2') {
+        sort = ` and goods_state = 2`
+    } else {
+        sort = ` and goods_state = 3`
+    }
+
+    db.query(sql.mypage_likeList_count + sort, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '회원에러' });
+        }
+        response.json(results);
+    });
+})
 
 // 마이 리뷰
 router.get('/myreview/:user_no', function (request, response, next) {

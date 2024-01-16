@@ -295,7 +295,7 @@ router.get('/goodsSearchMax/:keyword', function (request, response, next) {
 // Main_상품 검색 리스트
 router.get('/goodsSearch/:keyword/:num/:sort', function (request, response, next) {
     const keyword = '%' + request.params.keyword + '%';
-    const num = parseInt(request.params.num);
+    const num = parseInt(request.params.num*10);
     const sort = request.params.sort;
 
     db.query(sql.goods_searchlist + ` ORDER BY goods_upload_date `+ sort +` limit `+num+`, 10`, [keyword], function (error, results, fields) {
@@ -482,93 +482,6 @@ router.post('/orderPayment', function (request, response, next) {
                     order_no: results[0].order_no
                 });
             })
-            
-
-            // if (Array.isArray(order_detail)) {
-            //     const detailPromises = order_detail.map((detail) => {
-            //         return new Promise((resolve, reject) => {
-            //             db.query(sql.order_payment_detail, [orderTradeNo, detail.goods_no, detail.order_goods_nm, detail.order_goods_price,
-            //                 detail.order_goods_img, detail.order_goods_cnt],
-            //                 function (error, results, fields) {
-            //                     if (error) {
-            //                         reject(error);
-            //                     } else {
-            //                         resolve();
-            //                     }
-            //                 });
-            //         });
-            //     });
-
-            //     Promise.all(detailPromises)
-            //         .then(() => {
-            //             db.query(sql.order_goods_cnt, [order_detail.goods_cnt, order_detail.goods_no], function (error) {
-            //                 if (error) {
-            //                     return response.status(500).json({
-            //                         message: 'DB_error'
-            //                     });
-            //                 }
-
-            //                 if (order.order_dc > 0) {
-            //                     db.query(sql.order_usepoint, [order.order_dc, order.user_no], function (error) {
-            //                         if (error) {
-            //                             return response.status(500).json({
-            //                                 message: 'DB_error'
-            //                             });
-            //                         }
-
-            //                         return response.status(200).json({
-            //                             message: '완료'
-            //                         });
-            //                     });
-            //                 } else {
-            //                     return response.status(200).json({
-            //                         message: '완료'
-            //                     });
-            //                 }
-            //             });
-            //         })
-            //         .catch(() => {
-            //             return response.status(500).json({
-            //                 message: 'DB_error'
-            //             });
-            //         });
-            // } else {
-            //     // order_detail이 배열이 아닌 경우에는 해당 주문 상세 정보 하나만 처리
-            //     db.query(sql.order_payment_detail, [orderTradeNo, order_detail.goods_no, order_detail.order_goods_nm, order_detail.order_goods_price,
-            //         order_detail.order_goods_img, order_detail.order_goods_cnt],
-            //         function (error, results, fields) {
-            //             if (error) {
-            //                 return response.status(500).json({
-            //                     message: 'DB_error'
-            //                 });
-            //             }
-            //             db.query(sql.order_goods_cnt, [order_detail.goods_cnt, order_detail.goods_no], function (error) {
-            //                 if (error) {
-            //                     return response.status(500).json({
-            //                         message: 'DB_error'
-            //                     });
-            //                 }
-
-            //                 if (order.order_dc > 0) {
-            //                     db.query(sql.order_usepoint, [order.order_dc, order.user_no], function (error) {
-            //                         if (error) {
-            //                             return response.status(500).json({
-            //                                 message: 'DB_error'
-            //                             });
-            //                         }
-
-            //                         return response.status(200).json({
-            //                             message: '완료'
-            //                         });
-            //                     });
-            //                 } else {
-            //                     return response.status(200).json({
-            //                         message: '완료'
-            //                     });
-            //                 }
-            //             });
-            //         });
-            // }
         });
 });
 
