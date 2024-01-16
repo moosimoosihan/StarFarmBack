@@ -333,17 +333,19 @@ router.post('/admin_check', function (request, response) {
 })
 
 // 회원리스트
-router.get('/admin/userlist/:keyword/:sort', function (request, response, next) {
+router.get('/admin/userlist/:keyword/:sort/:num', function (request, response, next) {
 
     const keyword = request.params.keyword;
     let search = '';
     const sort = ` ORDER BY USER_CREATE_DT ${request.params.sort}`;
+    const num = parseInt(request.params.num) * 10;
+    const page = ` LIMIT ${num}, 10`;
 
     if (keyword != 'none') {
         search = ` AND user_id Like '%${keyword}%'`;
     }
     
-    db.query(sql.userlist + search + sort, function (error, results, fields) {
+    db.query(sql.userlist + search + sort + page, function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '회원리스트에러' });
@@ -534,9 +536,15 @@ router.get('/report_count/:user_no', function (request, response, next) {
     });
 });
 
-// 신고정보 가져오기
-router.get('/admin/reportlist', function (request, response, next){
-    db.query(sql.report_userlist, function (error, results, fields){
+// 신고 총 갯수 가져오기
+router.get('/admin/reportlist/:keyword', function (request, response, next){
+    var keyword = request.params.keyword;
+    if(keyword == 'none') {
+        keyword = '';
+    } else {
+        keyword = ` WHERE REPORT_TITLE Like '%${keyword}%'`;
+    }
+    db.query(sql.report_userlist + keyword, function (error, results, fields){
        if(error){
            console.error(error);
            return response.status(500).json({ error: '신고정보가져오기에러'});
@@ -546,14 +554,17 @@ router.get('/admin/reportlist', function (request, response, next){
 });
 
 // 모든 신고 불러오기
-router.get('/admin/reportlistInfo/:keyword/:sort', function (request, response, next) {
+router.get('/admin/reportlistInfo/:keyword/:sort/:num', function (request, response, next) {
+    
     const keyword = request.params.keyword;
     let search = '';
     if(keyword != 'none') {
         search = ` WHERE REPORT_TITLE Like '%${keyword}%'`;
     }
     const sort = ` ORDER BY REPORT_DATE ${request.params.sort}`;
-    db.query(sql.report_list + search + sort, function (error, results, fields) {
+    const num = parseInt(request.params.num) * 10;
+    const page = ` LIMIT ${num}, 10`;
+    db.query(sql.report_list + search + sort + page, function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '신고관리에러' });
@@ -590,6 +601,22 @@ router.post('/delete_img', (request, response) => {
     catch (error) {
         console.log(error)
     }
+})
+
+// 총 회원 수를 구하는 로직
+router.get('/admin/allUsersPage/:keyword', function (request, response, next) {
+    const keyword = request.params.keyword;
+    let search = '';
+    if(keyword != 'none') {
+        search = ` AND user_id Like '%${keyword}%'`;
+    }
+    db.query(sql.allUsersPage + search, function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '회원리스트에러' });
+        }
+        response.json(results);
+    });
 })
 
 module.exports = router;

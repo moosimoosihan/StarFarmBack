@@ -1046,10 +1046,18 @@ router.get('/getUserNo/:goods_no', function (request, response, next) {
     })
 })
 
-router.get('/allGoodsPage/:num', function (request, response, next) {
-    const num = parseInt(request.params.num) * 10
+router.get('/allGoodsPage/:keyword/:sort/:num', function (request, response, next) {
+    var keyword = '';
+    if(request.params.keyword != 'none') {
+        keyword = ` WHERE GOODS_NM LIKE '%${request.params.keyword}%'`;
+    } else {
+        keyword = '';
+    }
+    const num = parseInt(request.params.num) * 10;
+    const sort = ` ORDER BY GOODS_UPLOAD_DATE ${request.params.sort}`;
+    const page = ` limit ${num}, 10`;
 
-    db.query(sql.all_goods_page, [num], function (error, results, fields) {
+    db.query(sql.all_goods_page + keyword + sort + page, function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'DB 에러' });
@@ -1058,9 +1066,14 @@ router.get('/allGoodsPage/:num', function (request, response, next) {
     })
 })
 
-router.get('/allGoods', function (request, response, next) {
-
-    db.query(sql.all_goods, function (error, results, fields) {
+router.get('/allGoods/:keyword', function (request, response, next) {
+    var keyword = '';
+    if(request.params.keyword != 'none') {
+        keyword = ` WHERE GOODS_NM LIKE '%${request.params.keyword}%'`;
+    } else {
+        keyword = '';
+    }
+    db.query(sql.all_goods + keyword, function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error:'DB 에러' });

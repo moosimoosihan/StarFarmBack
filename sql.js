@@ -19,10 +19,7 @@ module.exports = {
 
   // admin 기능 
   admin_check: `SELECT user_tp FROM tb_user WHERE user_no = ?`,
-  report_userlist: `SELECT u.user_no, u.user_id, u.user_nick, u.user_email, u.user_ban, u.user_create_dt, count(r.report_user_no)
-                    FROM tb_user u, tb_report r
-                    WHERE user_tp = 0 and r.report_user_no = u.user_no
-                    GROUP BY u.user_no`,
+  report_userlist: `SELECT count(*) as count FROM tb_report`,
   ban_update_user: `UPDATE tb_user SET user_ban = ? where user_no = ?`,
   report_list: `SELECT REPORT_TITLE, REPORT_DATE, REPORT_NO, REPORT_IMG, REPORT_CATEGORY, REPORT_CONTENT, USER_NO, REPORT_USER_NO FROM tb_report`,
   report_info: `SELECT * FROM tb_report WHERE report_no = ?`,
@@ -36,6 +33,7 @@ module.exports = {
                             WHERE ORDER_TRADE_NO IN (?)`, */
   delete_user: `DELETE FROM tb_user WHERE user_id = ?`,
   userlist: `SELECT USER_NO, USER_ID, USER_NICK, USER_EMAIL, USER_BAN, USER_CREATE_DT FROM tb_user WHERE user_tp = 0`,
+  allUsersPage : `SELECT count(*) as count FROM tb_user WHERE user_tp = 0`,
 
   // goods
   goods_add: `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, goods_timer, user_no) VALUES (?,?,?,?,?,?,?,?,?)`,
@@ -45,8 +43,8 @@ module.exports = {
   delete_goods: `UPDATE tb_goods SET delete_time = now() WHERE goods_no = ?`,
   delete_goods_2: `DELETE FROM tb_goods WHERE goods_nm = ?`,
   get_img_nm: `SELECT goods_img, goods_content FROM tb_goods WHERE goods_no = ?`,
-  all_goods: `SELECT * FROM tb_goods`,
-  all_goods_page: `SELECT * FROM tb_goods limit ?, 10`,
+  all_goods: `SELECT count(*) as count FROM tb_goods`,
+  all_goods_page: `SELECT * FROM tb_goods`,
   goods_list: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer, goods_content
                   FROM tb_goods
                   WHERE delete_time IS NULL and goods_state = 0
@@ -173,7 +171,7 @@ module.exports = {
   mypage_saleList2: `select * from tb_goods where delete_time is null and user_no = ? order by goods_upload_date desc limit 4`,
 
   //유저페이지
-  get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no, goods_timer
+  get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no, goods_timer, goods_start_price, goods_content
                     FROM tb_goods
                     WHERE user_no = ?
                     limit 0 , 10`,
