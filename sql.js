@@ -159,7 +159,7 @@ module.exports = {
                   where r.user_no = ? and r.goods_no = g.goods_no and r.sell_user_no = u.user_no`,
   get_chat_room: `SELECT * FROM TB_CHATROOM WHERE CHATROOM_USER1 = ? and CHATROOM_OUT1 = 0 or CHATROOM_USER2 = ? and CHATROOM_OUT2 = 0`,
   get_comment: `SELECT c.CHAT_CONTENT FROM TB_CHAT c, TB_CHATROOM r WHERE c.CHATROOM_NO = ? ORDER BY c.CHAT_DATE DESC LIMIT 1`,
-  mypage_like_list2: `SELECT l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no
+  mypage_like_list2: `SELECT l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no, g.goods_timer
                       FROM tb_like l, tb_goods g
                       WHERE l.user_no = ? and l.goods_no = g.goods_no
                       ORDER BY g.goods_upload_date DESC limit 4`,
