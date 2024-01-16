@@ -147,8 +147,7 @@ module.exports = {
                   WHERE user_no = ?`,
   mypage_orderList: `select g.goods_no, g.goods_nm, g.goods_start_price, g.goods_img, max(b.bid_amount) as bid_amount, b.goods_no, b.user_no, g.goods_state, g.goods_timer, g.goods_trade
                     from tb_goods g, tb_bid b
-                    where g.goods_no = b.goods_no and b.user_no = ?
-                    group by g.goods_no`,
+                    where g.goods_no = b.goods_no and b.user_no = ?`,
   mypage_saleList: `select * from tb_goods where delete_time is null and user_no = ?`,
   mypage_likeList: `select l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no
                     from tb_like l, tb_goods g
@@ -169,6 +168,11 @@ module.exports = {
                     group by g.goods_no
                     order by g.goods_upload_date desc limit 4`,
   mypage_saleList2: `select * from tb_goods where delete_time is null and user_no = ? order by goods_upload_date desc limit 4`,
+  mypage_saleList_count: `select count(*) as count from tb_goods where delete_time is null and user_no = ?`,
+  // 내가 입찰한 상품들의 수를 가져옴
+  all_bid_count : `select count(*) as count
+                    from tb_goods g, tb_bid b
+                    where g.goods_no = b.goods_no and b.user_no = ?`,
 
   //유저페이지
   get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no, goods_timer, goods_start_price, goods_content

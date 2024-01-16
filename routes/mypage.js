@@ -83,10 +83,23 @@ router.get('/saleList_preview/:user_no', function (request, response, next) {
 })
 
 // 판매 상품 리스트
-router.get('/salelist/:user_no', function (request, response, next) {
+router.get('/salelist/:user_no/:sort/:page', function (request, response, next) {
     const user_no = request.params.user_no;
+    var sort = request.params.sort;
+    if(sort=='none'){
+        sort = ''
+    } else if(sort=='0'){
+        sort = ` and goods_state = 0`
+    } else if(sort=='1'){
+        sort = ` and goods_state = 1`
+    } else if(sort=='2') {
+        sort = ` and goods_state = 2`
+    } else {
+        sort = ` and goods_state = 3`
+    }
+    const page = ` limit ${request.params.page*10}, 10`;
 
-    db.query(sql.mypage_saleList, [user_no], function (error, results, fields) {
+    db.query(sql.mypage_saleList + sort + page, [user_no], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '회원에러' });
@@ -94,6 +107,31 @@ router.get('/salelist/:user_no', function (request, response, next) {
         response.json(results);
     });
 });
+
+// 판매 상품 갯수 불러오기
+router.get('/salelistCount/:user_no/:sort', function (request, response, next) {
+    const user_no = request.params.user_no;
+    var sort = request.params.sort;
+    if(sort=='none'){
+        sort = ''
+    } else if(sort=='0'){
+        sort = ` and goods_state = 0`
+    } else if(sort=='1'){
+        sort = ` and goods_state = 1`
+    } else if(sort=='2') {
+        sort = ` and goods_state = 2`
+    } else {
+        sort = ` and goods_state = 3`
+    }
+
+    db.query(sql.mypage_saleList_count + sort, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '회원에러' });
+        }
+        response.json(results);
+    });
+})
 
 // 관심 상품 리스트
 router.get('/likelist/:user_no', function (request, response, next) {
@@ -265,10 +303,23 @@ router.get('/getMyReview/:user_no', function (request, response, next) {
 })
 
 // 입찰상품 리스트
-router.get('/orderlist/:user_no', function (request, response, next) {
+router.get('/orderlist/:user_no/:sort/:page', function (request, response, next) {
     const user_no = request.params.user_no;
+    var sort = request.params.sort;
+    if(sort=='none'){
+        sort = ' group by g.goods_no'
+    } else if(sort=='0'){
+        sort = ` and g.goods_state = 0 group by g.goods_no`
+    } else if(sort=='1'){
+        sort = ` and g.goods_state = 1 group by g.goods_no`
+    } else if(sort=='2') {
+        sort = ` and g.goods_state = 2 group by g.goods_no`
+    } else {
+        sort = ` and g.goods_state = 3 group by g.goods_no`
+    }
+    const page = ` limit ${request.params.page*10}, 10`;
 
-    db.query(sql.mypage_orderList, [user_no], function (error, results, fields) {
+    db.query(sql.mypage_orderList + sort + page, [user_no], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '회원에러' });
@@ -503,6 +554,30 @@ router.post('/deleteUser/:user_no', function (request, response, next) {
         });
     })
     return response.status(200).json({ message: 'delete_success' });
+});
+
+router.get('/orderCount/:user_no/:sort', function (request, response, next) {
+    const user_no = request.params.user_no;
+    var sort = request.params.sort;
+    if(sort=='none'){
+        sort = ' group by b.goods_no';
+    } else if(sort=='0') {
+        sort = ` and g.GOODS_STATE = 0 group by b.goods_no`
+    } else if(sort=='1'){
+        sort = ` and g.GOODS_STATE = 1 group by b.goods_no`
+    } else if(sort=='2') {
+        sort = ` and g.GOODS_STATE = 2 group by b.goods_no`
+    } else {
+        sort = ` and g.GOODS_STATE = 3 group by b.goods_no`
+    }
+
+    db.query(sql.all_bid_count + sort, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '주문내역에러' });
+        }
+        response.json(results);
+    })
 })
 
 module.exports = router;
