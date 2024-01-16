@@ -47,7 +47,7 @@ module.exports = {
   get_img_nm: `SELECT goods_img, goods_content FROM tb_goods WHERE goods_no = ?`,
   all_goods: `SELECT * FROM tb_goods`,
   all_goods_page: `SELECT * FROM tb_goods limit ?, 10`,
-  goods_list: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer
+  goods_list: `SELECT goods_no, goods_category, goods_nm, goods_img, goods_start_price, goods_state, goods_timer, goods_content
                   FROM tb_goods
                   WHERE delete_time IS NULL and goods_state = 0
                   ORDER BY goods_upload_date desc
@@ -141,6 +141,9 @@ module.exports = {
   get_user_info: `SELECT user_no, user_id, user_nick, user_email, user_img, user_mobile, user_zipcode, user_adr1, user_adr2, user_fr, user_social_tp, user_tp, user_ban
                   FROM tb_user
                   WHERE user_no = ?`,
+  get_user_info_page: `SELECT user_no, user_id, user_nick, user_email, user_img, user_mobile, user_zipcode, user_adr1, user_adr2, user_fr, user_social_tp, user_tp, user_ban
+                    FROM tb_user
+                    WHERE user_no = ? limit 10`,
   mypage_update: `UPDATE tb_user 
                   SET user_nick = ?, user_email = ?, user_mobile =?, user_zipcode =?, user_adr1 =?, user_adr2 =?
                   WHERE user_no = ?`,

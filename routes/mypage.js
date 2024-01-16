@@ -42,6 +42,9 @@ router.get('/mypage/:user_no', function (request, response, next) {
     });
 });
 
+//마이페이지 페이징 라우터
+router.get('/mypage')
+
 //마이페이지 메인 내가 찜한 상품
 router.get('/likelist_preview/:user_no', function (request, response, next) {
     const user_no = request.params.user_no;
