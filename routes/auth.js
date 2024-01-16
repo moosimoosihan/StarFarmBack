@@ -558,7 +558,6 @@ router.get('/admin/reportlistInfo/:keyword/:sort', function (request, response, 
             console.error(error);
             return response.status(500).json({ error: '신고관리에러' });
         }
-        console.log(results);
         response.json(results);
     });
 })
