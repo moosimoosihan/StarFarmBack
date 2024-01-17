@@ -61,7 +61,7 @@ module.exports = {
                           FROM tb_goods
                           WHERE goods_category = ? and goods_categody_detail = ?
                           ORDER BY goods_upload_date desc`,
-  goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
+  goods_searchlist: `SELECT goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer, goods_content
                        FROM tb_goods
                        WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0`,
   get_goods_info: `SELECT goods_no, goods_category, goods_category_detail, goods_nm, goods_img, goods_content, goods_state, goods_start_price, goods_timer, goods_trade, goods_deliv_price, user_no, goods_succ_price
@@ -87,10 +87,10 @@ module.exports = {
   goods_comp : `UPDATE tb_goods SET goods_state = 2 WHERE goods_no = ?`,
   restore_goods : `UPDATE tb_goods SET delete_time = null WHERE goods_no = ?`,
   search_goods_count : `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_nm LIKE ? and delete_time is null and goods_state = 0`,
-  search_category : `select goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
+  search_category : `select goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer, goods_content
                     from tb_goods
                     where goods_category = ? and DELETE_TIME is null and GOODS_STATE = 0`,
-  search_category_detail : `select goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer
+  search_category_detail : `select goods_no, goods_nm, goods_img, goods_start_price, goods_state, user_no, goods_timer, goods_content
                             from tb_goods
                             where goods_category = ? and GOODS_CATEGORY_DETAIL = ? and DELETE_TIME is null and GOODS_STATE = 0`,
   search_category_count: `SELECT COUNT(*) as max_page FROM tb_goods WHERE goods_category = ? and delete_time is null and goods_state = 0`,
@@ -169,6 +169,8 @@ module.exports = {
                     order by g.goods_upload_date desc limit 4`,
   mypage_saleList2: `select * from tb_goods where delete_time is null and user_no = ? order by goods_upload_date desc limit 4`,
   mypage_saleList_count: `select count(*) as count from tb_goods where delete_time is null and user_no = ?`,
+  get_my_review_count : `SELECT COUNT(*) as count FROM tb_review WHERE user_no = ?`,
+  mypage_orderList_count: `select count(*) as count from tb_goods g, tb_order o where g.goods_no = o.goods_no and o.user_no = ?`,
   // 내가 입찰한 상품들의 수를 가져옴
   all_bid_count : `select count(*) as count
                     from tb_goods g, tb_bid b
@@ -198,7 +200,7 @@ module.exports = {
   like_insert: `INSERT INTO tb_like (user_no, goods_no) VALUES (?,?)`,
   like_delete: `DELETE FROM tb_like WHERE user_no = ? AND goods_no = ?`,
   like_check: `SELECT * FROM tb_like WHERE user_no = ? AND goods_no = ?`,
-  like_count: `SELECT COUNT(*) FROM tb_like WHERE goods_no = ?`,
+  like_count: `SELECT COUNT(*) as like_count FROM tb_like WHERE goods_no = ?`,
 
   //qna게시판
   /* content: `SELECT * FROM tb_qna JOIN tb_user 
@@ -264,6 +266,7 @@ module.exports = {
   chat_room_out2 : `UPDATE TB_CHATROOM SET CHATROOM_OUT2 = 1 WHERE CHATROOM_NO = ?`,
   delete_chatroom_chat : `DELETE FROM TB_CHAT WHERE CHATROOM_NO = ?`,
   delete_chat_room : `DELETE FROM TB_CHATROOM WHERE CHATROOM_NO = ?`,
+  get_chatroom_count: `SELECT COUNT(*) as count FROM TB_CHATROOM WHERE CHATROOM_USER1 = ? and CHATROOM_OUT1 = 0 or CHATROOM_USER2 = ? and CHATROOM_OUT2 = 0`,
 
   // 유저 삭제시 필요한 삭제 쿼리 유저 테이블의 delete_time을 한달 뒤로 설정
   delete_user_month: `UPDATE tb_user SET user_delete = DATE_ADD(NOW(), INTERVAL 1 MONTH) WHERE user_no = ?`,

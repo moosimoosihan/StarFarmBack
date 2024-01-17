@@ -486,10 +486,16 @@ router.post('/orderPayment', function (request, response, next) {
 });
 
 // 주문 리스트
-router.get('/orderlist/:userno', function (request, response, next) {
-
-    const userno = request.params.userno;
-    db.query(sql.get_order_list, [userno], function (error, results, fields) {
+router.get('/orderlist/:user_no/:sort/:page', function (request, response, next) {
+    const user_no = request.params.user_no;
+    var sort = request.params.sort;
+    if(sort==='DESC'){
+        sort = ' ORDER BY ORDER_DATE DESC';
+    } else {
+        sort = ' ORDER BY ORDER_DATE';
+    }
+    const page = ` limit ${request.params.page*10}, 10`;
+    db.query(sql.get_order_list + sort + page, [user_no], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '결제리스트에러' });
@@ -1061,6 +1067,18 @@ router.get('/orderCount/:goods_no/:user_no', function (request, response, next) 
     const user_no = request.params.user_no;
 
     db.query(sql.order_count, [goods_no, user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error:'DB 에러' });
+        }
+        return response.json(results);
+    })
+})
+
+router.get('/likeCounts/:goods_no' , function (request, response, next) {
+    const goods_no = request.params.goods_no;
+
+    db.query(sql.like_count, [goods_no], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error:'DB 에러' });

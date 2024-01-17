@@ -186,10 +186,11 @@ router.get('/likecount/:user_no/:sort', function (request, response, next) {
 })
 
 // 마이 리뷰
-router.get('/myreview/:user_no', function (request, response, next) {
+router.get('/myreview/:user_no/:page', function (request, response, next) {
     const user_no = request.params.user_no;
+    const page = ` limit ${request.params.page*10}, 10`;
 
-    db.query(sql.mypage_review, [user_no], function (error, results, fields) {
+    db.query(sql.mypage_review + page, [user_no], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '회원에러' });
@@ -394,10 +395,11 @@ router.get('/get_user_review/:user_no', function (request, response, next) {
 })
 
 // 채팅방 리스트 불러오기
-router.get('/getChatRoom/:user_no', function (request, response, next) {
+router.get('/getChatRoom/:user_no/:page', function (request, response, next) {
     const user_no = request.params.user_no;
+    const page = ` limit ${request.params.page*10}, 10`;
 
-    db.query(sql.get_chat_room, [user_no, user_no], function (error, results, fields) {
+    db.query(sql.get_chat_room + page, [user_no, user_no], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '채팅에러' });
@@ -616,6 +618,42 @@ router.get('/orderCount/:user_no/:sort', function (request, response, next) {
             return response.status(500).json({ error: '주문내역에러' });
         }
         response.json(results);
+    })
+})
+
+router.get('/getChatRoomCount/:user_no', function(request, response) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.get_chatroom_count, [user_no, user_no], function(error, result, fields){
+        if(error){
+            console.log(error);
+            response.status(500).send('Internal Server Error');
+        }
+        response.status(200).send(result);
+    })
+})
+
+router.get('/myreviewCount/:user_no', function(request, response) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.get_my_review_count, [user_no], function(error, result, fields){
+        if(error){
+            console.log(error);
+            response.status(500).send('Internal Server Error');
+        }
+        response.status(200).send(result);
+    })
+})
+
+router.get('/orderlistCount/:user_no/', function(request, response) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.mypage_orderList_count, [user_no], function(error, result, fields){
+        if(error){
+            console.log(error);
+            response.status(500).send('Internal Server Error');
+        }
+        response.status(200).send(result);
     })
 })
 
