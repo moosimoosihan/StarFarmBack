@@ -228,7 +228,7 @@ router.post('/mypageupdate', function (request, response, next) {
                         message: 'mypage_update'
                     })
                 } else {
-                    if(user.user_img == '' || user.user_img.split('.')[0] == user.user_no){
+                    if(user.user_img == ''){
                         return response.status(200).json({
                             message: 'mypage_update'
                         })
