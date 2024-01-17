@@ -158,11 +158,11 @@ module.exports = {
                   where r.user_no = ? and r.goods_no = g.goods_no and r.sell_user_no = u.user_no`,
   get_chat_room: `SELECT * FROM TB_CHATROOM WHERE CHATROOM_USER1 = ? and CHATROOM_OUT1 = 0 or CHATROOM_USER2 = ? and CHATROOM_OUT2 = 0`,
   get_comment: `SELECT c.CHAT_CONTENT FROM TB_CHAT c, TB_CHATROOM r WHERE c.CHATROOM_NO = ? ORDER BY c.CHAT_DATE DESC LIMIT 1`,
-  mypage_like_list2: `SELECT l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no, g.goods_timer
+  mypage_like_list2: `SELECT l.*, g.goods_nm, g.goods_img, g.goods_start_price, g.user_no, g.goods_timer, g.goods_content
                       FROM tb_like l, tb_goods g
                       WHERE l.user_no = ? and l.goods_no = g.goods_no
                       ORDER BY g.goods_upload_date DESC limit 4`,
-  mypage_orderList2: `select g.goods_no, g.goods_nm, g.goods_start_price, g.goods_img, max(b.bid_amount) as bid_amount, b.goods_no, b.user_no, g.goods_state, g.goods_timer
+  mypage_orderList2: `select g.goods_no, g.goods_nm, g.goods_start_price, g.goods_img, max(b.bid_amount) as bid_amount, b.goods_no, b.user_no, g.goods_state, g.goods_timer, g.goods_content
                     from tb_goods g, tb_bid b
                     where g.goods_no = b.goods_no and b.user_no = ?
                     group by g.goods_no
@@ -180,11 +180,12 @@ module.exports = {
   get_user_product: `SELECT goods_no, goods_nm, goods_img, user_no, goods_timer, goods_start_price, goods_content
                     FROM tb_goods
                     WHERE user_no = ?
-                    limit 0 , 10`,
-  get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r.review_create_dt, g.goods_no, g.goods_img, g.goods_nm, u.user_nick
-                    FROM tb_review r, tb_goods g, tb_user u
-                    WHERE r.sell_user_no = ? and u.user_no = r.user_no
-                    group by review_no`,
+                    order by goods_no desc limit 6`,
+get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r.review_create_dt, g.goods_no, g.goods_img, g.goods_nm, u.user_nick
+                  FROM tb_review r, tb_goods g, tb_user u
+                  WHERE r.sell_user_no = ? and u.user_no = r.user_no
+                  group by review_no
+                  order by r.review_no desc limit 5`,
 
   //pass
   get_password: 'SELECT user_pw FROM tb_user WHERE user_no = ?',
@@ -309,4 +310,7 @@ module.exports = {
 
   // 해당 상품의 입찰내역도 모두 삭제
   delete_bid_2 : `DELETE FROM tb_bid WHERE goods_no = ?`,
+
+  goods_count : `SELECT count(*) as count FROM tb_goods`,
+  goods_add2 : `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, user_no, goods_img, goods_timer) VALUES (?,?,?,?,?,?,?,?,?,`,
 }

@@ -25,7 +25,7 @@ module.exports = async () => {
                 console.error(error);
                 return response.status(500).json({ error: 'DB 에러' });
               }
-              console.log(goods_no+'번 상품의 낙찰금액이 '+goods_succ_bid+'원으로 변경되며 상태가 낙찰로 바뀌었습니다.')
+              // console.log(goods_no+'번 상품의 낙찰금액이 '+goods_succ_bid+'원으로 변경되며 상태가 낙찰로 바뀌었습니다.')
             })
           }
           else {
@@ -36,7 +36,7 @@ module.exports = async () => {
                 console.error(error);
                 return response.status(500).json({ error: 'DB 에러' });
               }
-              console.log(goods_no+'번 상품의 낙찰금액이 0원으로 변경되며 상태가 낙찰 없음으로 바뀌었습니다.')
+              // console.log(goods_no+'번 상품의 낙찰금액이 0원으로 변경되며 상태가 낙찰 없음으로 바뀌었습니다.')
             })
           }
         })
@@ -51,7 +51,7 @@ module.exports = async () => {
       }
       const goodsList = results;
       for(let i = 0; i < goodsList.length; i++) {
-        console.log(goodsList[i].goods_no+'번 상품의 경매가 '+goodsList[i].goods_timer+'에 종료되도록 다시 스케줄링 되었습니다.');
+        // console.log(goodsList[i].goods_no+'번 상품의 경매가 '+goodsList[i].goods_timer+'에 종료되도록 다시 스케줄링 되었습니다.');
         const job = scheduleJob(goodsList[i].goods_timer, async () => {
           // 경매 종료 시간이 되면 상품 상태 변경 후 낙찰금액 DB에 입력
           db.query(sql.goods_succ_bid, [goodsList.goods_no], function (error, results, fields) {

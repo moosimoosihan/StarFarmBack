@@ -298,7 +298,7 @@ router.get('/goodsSearch/:keyword/:num/:sort', function (request, response, next
     const num = parseInt(request.params.num*10);
     const sort = request.params.sort;
 
-    db.query(sql.goods_searchlist + ` ORDER BY goods_upload_date `+ sort +` limit `+num+`, 10`, [keyword], function (error, results, fields) {
+    db.query(sql.goods_searchlist + ` ORDER BY goods_timer `+ sort +` limit `+num+`, 10`, [keyword], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'search_error' });
@@ -313,7 +313,7 @@ router.get('/category_search/:category/:num/:sort', function (request, response,
     const num = parseInt(request.params.num);
     const sort = request.params.sort;
 
-    db.query(sql.search_category + ` ORDER BY goods_upload_date `+ sort +` limit `+num+`, 10`, [category], function (error, results, fields) {
+    db.query(sql.search_category + ` ORDER BY goods_timer `+ sort +` limit `+num+`, 10`, [category], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'search_error' });
@@ -329,7 +329,7 @@ router.get('/category_detail_search/:category/:category_detail/:num/:sort', func
     const num = parseInt(request.params.num);
     const sort = request.params.sort;
 
-    db.query(sql.search_category_detail + ` ORDER BY goods_upload_date `+ sort +` limit `+num+`, 10`, [category, category_detail], function (error, results, fields) {
+    db.query(sql.search_category_detail + ` ORDER BY goods_timer `+ sort +` limit `+num+`, 10`, [category, category_detail], function (error, results, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: 'search_error' });

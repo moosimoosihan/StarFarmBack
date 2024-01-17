@@ -1,3 +1,7 @@
+// 이미지 넣는 테스트 코드
+const testImgInsert = require('./testImgInsert');
+testImgInsert();
+
 const express = require('express');
 const cors = require('cors');
 const app = express();
