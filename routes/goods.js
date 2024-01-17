@@ -765,18 +765,23 @@ router.post('/write_review/:goods_no', function (request, response, next) {
             return response.status(500).json({ error: 'error' });
         }
 
-
-        // 주문 상세에서 리뷰 체크 속성 0 -> 1 변경
-        // db.query(sql.check_review, [review.order_no], function (error, results, fields) {
-        //     if (error) {
-        //         console.error(error);
-        //         return response.status(500).json({ error: 'error' });
-        //     }
-        // })
-
-        return response.status(200).json({
-            message: 'review_complete'
-        });
+        // 리뷰 후 점수 유저에게 적용 (review.review_score) 0==+1 1==-1 2==0
+        db.query(sql.get_user_fr, [review.sell_user_no], function (error, resultfr) {
+            if (error) {
+                console.error(error);
+                return response.status(500).json({ error: 'error' });
+            }
+            const score = (review.review_score==0?1:review.review_score==1?-1:0)+resultfr[0].user_fr;
+            db.query(sql.review_score_update, [score, review.sell_user_no], function (error, result) {
+                if (error) {
+                    console.error(error);
+                    return response.status(500).json({ error: 'error' });
+                }
+                return response.status(200).json({
+                    message: 'review_complete'
+                });
+            })
+        })
     })
 });
 

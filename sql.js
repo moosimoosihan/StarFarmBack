@@ -239,6 +239,12 @@ module.exports = {
                           WHERE g.goods_no = ? and b.user_no = u.user_no and b.goods_no = g.goods_no
                           ORDER BY b.bid_amount DESC LIMIT 1`,
 
+  // 리뷰 점수 적용 먼저 유저의 user_fr을 가져오기
+  get_user_fr: `SELECT user_fr FROM tb_user WHERE user_no = ?`,
+  // 리뷰 점수 적용
+  review_score_update: `UPDATE tb_user SET user_fr = ? WHERE user_no = ?`,
+  
+
   // 신고
   report : `INSERT INTO tb_report (report_title, report_category, report_content, report_user_no, user_no) VALUES (?,?,?,?,?)`,
   report_img: `UPDATE tb_report SET report_img = ? WHERE report_no = ?`,
