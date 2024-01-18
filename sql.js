@@ -203,24 +203,6 @@ get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r
   like_check: `SELECT * FROM tb_like WHERE user_no = ? AND goods_no = ?`,
   like_count: `SELECT COUNT(*) as like_count FROM tb_like WHERE goods_no = ?`,
 
-  //qna게시판
-  /* content: `SELECT * FROM tb_qna JOIN tb_user 
-                WHERE tb_qna.user_no=tb_user.user_no AND qna_no = ?;`,
-  write: `INSERT INTO tb_qna (user_no, qna_title, qna_content, is_secret) VALUES (?, ?, ?, ?)`,
-  qna: `SELECT * FROM tb_qna JOIN tb_user 
-                WHERE tb_qna.user_no=tb_user.user_no 
-                ORDER BY QNA_NO DESC LIMIT ? OFFSET ?;`,//1  
-  qnaAdmin: `SELECT * FROM tb_qna JOIN tb_user
-          WHERE tb_qna.user_no=tb_user.user_no`, //1
-  deleteContent: `DELETE FROM tb_qna WHERE qna_no = ?`,
-  qnaEdit: `UPDATE tb_qna  SET qna_content = ?, qna_title = ? WHERE qna_no = ?;`,
-  qnaCheck: `SELECT user_tp FROM tb_user WHERE user_no =?;`,
-  qnaWrite: `UPDATE tb_qna  SET qna_answer = ?  WHERE qna_no = ?;`,
-  qnacnt: `SELECT COUNT(*) FROM tb_qna;`,
-  //문의내역확인
-  myqna: `SELECT * FROM tb_qna JOIN tb_user 
-        WHERE tb_qna.user_no=tb_user.user_no AND tb_qna.user_no = ?;`, */
-
   // 리뷰
   review_write: `INSERT INTO tb_review (review_con, user_no, goods_no, sell_user_no, review_score) VALUES (?, ?, ?, ?, ?)`,
 
