@@ -223,17 +223,52 @@ router.post('/mypageupdate', function (request, response, next) {
                     console.error(error);
                     return response.status(500).json({ error: 'mypage_update_error' });
                 }
-                if(user.user_img == '') {
-                    return response.status(200).json({
-                        message: 'mypage_update'
+                if(user.user_img == '' || user.user_img == null) {
+                    db.query(sql.add_user_img, [user.user_img, user.user_no], function (error, results, fields) {
+                        if (error) {
+                            throw error;
+                        }
+                        else {
+                            // 해당 유저의 폴더 지우기
+                            const dir = `${__dirname}` + `/../uploads/userImg/` + user.user_no;
+                            if (fs.existsSync(dir)) {
+                                fs.readdir(dir, (err, files) => {
+                                    if (err) throw err;
+                
+                                    for (const file of files) {
+                                        fs.unlink(path.join(dir, file), err => {
+                                            if (err) throw err;
+                                        });
+                                    }
+                                    fs.rmdir(dir, { recursive: true }, (err) => {
+                                        if (err) throw err;
+                                    });
+                                });
+                            }
+                            return response.status(200).json({
+                                message: 'mypage_update'
+                            })
+                        }
                     })
                 } else {
-                    if(user.user_img == ''){
-                        return response.status(200).json({
-                            message: 'mypage_update'
-                        })
-                    }
                     try {
+                        // 현재 이미지 지우고 새 이미지로 변경
+                        const dir = `${__dirname}` + `/../uploads/userImg/` + user.user_no;
+                        if (fs.existsSync(dir)) {
+                            fs.readdir(dir, (err, files) => {
+                                if (err) throw err;
+            
+                                for (const file of files) {
+                                    fs.unlink(path.join(dir, file), err => {
+                                        if (err) throw err;
+                                    });
+                                }
+                                fs.rmdir(dir, { recursive: true }, (err) => {
+                                    if (err) throw err;
+                                });
+                            });
+                        }
+
                         const filename = user.user_no
 
                         const pastDir = `${__dirname}` + `/../uploads/` + user.user_img;
