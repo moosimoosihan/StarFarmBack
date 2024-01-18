@@ -353,7 +353,7 @@ router.get('/admin/userlist/:keyword/:sort/:num', function (request, response, n
 })
 
 // 회원 상태 변경
-router.put('/admin/ban', function (request, response, next) {
+router.post('/admin/ban', function (request, response, next) {
     const user_no = request.body.user_no;
     const user_ban = request.body.user_ban;
 
