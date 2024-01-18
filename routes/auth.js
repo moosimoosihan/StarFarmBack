@@ -163,14 +163,12 @@ router.post('/mobile_check', function (request, response) {
 
 // 전화번호 체크2
 router.post('/mobile_check2', function (request, response) {
-    console.log(request.body);
     db.query(sql.mobile_check2, [request.body.user_mobile, request.body.user_no], function (error, results, fields) {
         if(error) {
             return response.status(500).json({
                 message: 'DB_error'
             })
         }
-        console.log(results.length);
         if (results.length <= 0) {
             return response.status(200).json({
                 message: 'available_phone'
