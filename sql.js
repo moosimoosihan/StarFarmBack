@@ -49,7 +49,7 @@ module.exports = {
                   FROM tb_goods
                   WHERE delete_time IS NULL and goods_state = 0
                   ORDER BY goods_upload_date desc
-                  limit 8`,
+                  limit 10`,
   update_goods: `UPDATE tb_goods
                 SET goods_nm = ?, goods_category = ?, goods_category_detail = ?, goods_start_price = ?, goods_timer = ?, goods_content = ?
                 WHERE goods_no = ?`,
@@ -203,24 +203,6 @@ get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r
   like_check: `SELECT * FROM tb_like WHERE user_no = ? AND goods_no = ?`,
   like_count: `SELECT COUNT(*) as like_count FROM tb_like WHERE goods_no = ?`,
 
-  //qna게시판
-  /* content: `SELECT * FROM tb_qna JOIN tb_user 
-                WHERE tb_qna.user_no=tb_user.user_no AND qna_no = ?;`,
-  write: `INSERT INTO tb_qna (user_no, qna_title, qna_content, is_secret) VALUES (?, ?, ?, ?)`,
-  qna: `SELECT * FROM tb_qna JOIN tb_user 
-                WHERE tb_qna.user_no=tb_user.user_no 
-                ORDER BY QNA_NO DESC LIMIT ? OFFSET ?;`,//1  
-  qnaAdmin: `SELECT * FROM tb_qna JOIN tb_user
-          WHERE tb_qna.user_no=tb_user.user_no`, //1
-  deleteContent: `DELETE FROM tb_qna WHERE qna_no = ?`,
-  qnaEdit: `UPDATE tb_qna  SET qna_content = ?, qna_title = ? WHERE qna_no = ?;`,
-  qnaCheck: `SELECT user_tp FROM tb_user WHERE user_no =?;`,
-  qnaWrite: `UPDATE tb_qna  SET qna_answer = ?  WHERE qna_no = ?;`,
-  qnacnt: `SELECT COUNT(*) FROM tb_qna;`,
-  //문의내역확인
-  myqna: `SELECT * FROM tb_qna JOIN tb_user 
-        WHERE tb_qna.user_no=tb_user.user_no AND tb_qna.user_no = ?;`, */
-
   // 리뷰
   review_write: `INSERT INTO tb_review (review_con, user_no, goods_no, sell_user_no, review_score) VALUES (?, ?, ?, ?, ?)`,
 
@@ -313,4 +295,19 @@ get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r
 
   goods_count : `SELECT count(*) as count FROM tb_goods`,
   goods_add2 : `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, user_no, goods_img, goods_timer) VALUES (?,?,?,?,?,?,?,?,?,`,
+
+  // 판매자가 해당 상품의 리뷰를 작성 할 수 있는 권한이 있는지 체크
+  sale_review_check : `SELECT * FROM tb_goods WHERE goods_no = ? and user_no = ?`,
+
+  // 구매자가 해당 상품의 리뷰를 작성 할 수 있는 권한이 있는지 체크
+  // 구매자를 확인하려면 tb_bid 테이블에서 해당 상품의 최고 입찰자를 가져와야함
+  review_check : `SELECT tb_bid.goods_no, tb_bid.user_no, MAX(tb_bid.bid_amount) AS max_bid_amount
+                  FROM tb_bid JOIN tb_goods ON tb_bid.goods_no = tb_goods.goods_no JOIN tb_user ON tb_bid.user_no = tb_user.user_no
+                  WHERE tb_bid.goods_no = ?
+                  GROUP BY tb_bid.goods_no, tb_bid.user_no
+                  ORDER BY MAX(TB_BID.bid_amount) desc
+                  limit 1`,
+  // 리뷰를 이미 작성했는지 체크
+  sale_review_check2 : `SELECT * FROM tb_review WHERE goods_no = ? and user_no = ?`,
+  sale_review_check3 : `SELECT * FROM tb_review WHERE goods_no = ? and sell_user_no = ?`,
 }

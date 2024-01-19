@@ -1087,4 +1087,72 @@ router.get('/likeCounts/:goods_no' , function (request, response, next) {
     })
 })
 
+router.get('/sale_review_check/:goods_no/:user_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+    const user_no = request.params.user_no;
+
+    db.query(sql.sale_review_check, [goods_no, user_no], function (error, results, fields) {
+        if(error) {
+            console.error(error);
+            return response.status(500).json({ error: 'error' });
+        }
+        if(results.length > 0) {
+            // 해당 상품에 대한 판매자 리뷰가 있는지 확인
+            db.query(sql.sale_review_check3, [goods_no, user_no], function (error, results2, fields) {
+                if(error) {
+                    console.error(error);
+                    return response.status(500).json({ error: 'error' });
+                }
+                if(results2.length == 0) {
+                    return response.status(200).json({
+                        message: 'review_ok'
+                    })
+                } else {
+                    return response.status(200).json({
+                        message: 'review_no'
+                    })
+                }
+            })
+        } else {
+            return response.status(200).json({
+                message: 'review_no'
+            })
+        }
+    })
+})
+
+router.get('/review_check/:goods_no/:user_no', function (request, response, next) {
+    const goods_no = request.params.goods_no;
+    const user_no = request.params.user_no;
+
+    db.query(sql.review_check, [goods_no], function (error, results, fields) {
+        if(error) {
+            console.error(error);
+            return response.status(500).json({ error: 'error' });
+        }
+        if(results[0].user_no == user_no) {
+            db.query(sql.sale_review_check2, [goods_no, user_no], function (error, results2, fields) {
+                if(error) {
+                    console.error(error);
+                    return response.status(500).json({ error: 'error' });
+                }
+                console.log(results2)
+                if(results2.length > 0) {
+                    return response.status(200).json({
+                        message: 'review_no'
+                    })
+                } else {
+                    return response.status(200).json({
+                        user_no : results[0].user_no,
+                    })
+                }
+            })
+        } else {
+            return response.status(200).json({
+                message: 'review_no'
+            })
+        }
+    })
+})
+
 module.exports = router;
