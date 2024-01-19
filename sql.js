@@ -310,4 +310,12 @@ get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r
   // 리뷰를 이미 작성했는지 체크
   sale_review_check2 : `SELECT * FROM tb_review WHERE goods_no = ? and user_no = ?`,
   sale_review_check3 : `SELECT * FROM tb_review WHERE goods_no = ? and sell_user_no = ?`,
+
+  // 알람 추가
+  add_alram : `INSERT INTO TB_ALRAM(ALRAM_COUNT, USER_NO) VALUE(?,?)`,
+
+  chat_delete_alram : `DELETE FROM TB_ALRAM WHERE ALRAM_COUNT = 0 AND USER_NO = ?`,
+  auction_delete_alram : `DELETE FROM TB_ALRAM WHERE ALRAM_COUNT = 1 AND USER_NO = ?`,
+
+  check_alram : `SELECT COUNT(ALRAM_COUNT) as count FROM TB_ALRAM WHERE USER_NO = ?`
 }

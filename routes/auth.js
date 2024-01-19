@@ -617,4 +617,17 @@ router.get('/admin/allUsersPage/:keyword', function (request, response, next) {
     });
 })
 
+// 알람 가져오기
+router.get('/check_alram/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.check_alram, [user_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '알람가져오기에러' });
+        }
+        response.json(results);
+    });
+})
+
 module.exports = router;
