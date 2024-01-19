@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../db/db.js');
 const sql = require('../sql.js');
 
+//해당 유저 둘의 채팅방 체크후 없을시 생성
 router.get('/getChatRoom/:user1/:user2', function(request, response) {
     const user1 = request.params.user1;
     const user2 = request.params.user2;
@@ -30,6 +31,7 @@ router.get('/getChatRoom/:user1/:user2', function(request, response) {
     })
 })
 
+//해당 채팅방의 채팅 목록 가져오기
 router.get('/getChat/:chat_room_no', function(request, response) {
     const chat_room_no = request.params.chat_room_no;
 
@@ -42,6 +44,7 @@ router.get('/getChat/:chat_room_no', function(request, response) {
     })
 })
 
+// 채팅 전송
 router.post('/send', function(request, response) {
     const chat_room_no = request.body.chatroom_no;
     const user_no = request.body.user_no;
@@ -74,7 +77,7 @@ router.post('/send', function(request, response) {
             }
         })
     })
-
+    // 채팅 전송후 db에 저장
     db.query(sql.send_chat, [chat_room_no, user_no, content], function(error, result, fields){
         if(error){
             console.log(error);
@@ -89,7 +92,7 @@ router.post('/outChatRoom', function(request, response) {
     const chat_room_no = request.body.room_no;
     const user_no = request.body.user_no;
     
-
+    // 채팅방에 두 유저 모두 나갔는지 확인
     db.query(sql.get_room, [chat_room_no], function(error, results, fields){
         if(results[0].CHATROOM_USER1===user_no && results[0].CHATROOM_OUT1===0) {
             if(results[0].CHATROOM_OUT2===1) {

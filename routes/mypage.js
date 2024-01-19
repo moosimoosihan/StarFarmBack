@@ -632,6 +632,7 @@ router.post('/deleteUser/:user_no', function (request, response, next) {
     return response.status(200).json({ message: 'delete_success' });
 });
 
+// 마이페이지 입찰상품 탭 페이징을 위한 전체 입찰상품 카운트
 router.get('/orderCount/:user_no/:sort', function (request, response, next) {
     const user_no = request.params.user_no;
     var sort = request.params.sort;
@@ -656,6 +657,7 @@ router.get('/orderCount/:user_no/:sort', function (request, response, next) {
     })
 })
 
+// 마이페이지 채팅목록 탭 페이징을 위한 전체 채팅방 카운트
 router.get('/getChatRoomCount/:user_no', function(request, response) {
     const user_no = request.params.user_no;
 
@@ -668,6 +670,7 @@ router.get('/getChatRoomCount/:user_no', function(request, response) {
     })
 })
 
+// 마이페이지 내가 쓴리뷰 탭 페이징을 위한 전체 리뷰 카운트
 router.get('/myreviewCount/:user_no', function(request, response) {
     const user_no = request.params.user_no;
 
@@ -680,6 +683,7 @@ router.get('/myreviewCount/:user_no', function(request, response) {
     })
 })
 
+// 마이페이지 구매상품 탭 페이징을 위한 전체 구매상품 카운트
 router.get('/orderlistCount/:user_no/', function(request, response) {
     const user_no = request.params.user_no;
 

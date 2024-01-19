@@ -521,16 +521,6 @@ router.get('/orderODetail/:orderno', function (request, response, next) {
         response.json(results);
     });
 });
-router.get('/orderDDetail/:orderno', function (request, response, next) {
-    const orderno = request.params.orderno;
-    db.query(sql.orderlist_d_detail, [orderno], function (error, results, fields) {
-        if (error) {
-            console.error(error);
-            return response.status(500).json({ error: '결제리스트에러' });
-        }
-        response.json(results);
-    });
-});
 
 // 구매 확정 적립금
 router.post('/orderPoint/:TRADE_NO/:user_no', function (request, response, next) {
@@ -602,7 +592,7 @@ router.post('/goodsRollback', function (request, response, next) {
 });
 
 
-// admi 주문관리 정렬방식 
+// admin 주문관리 정렬방식
 function orderSort(sortCase) {
     let order = ` ORDER BY o.ORDER_TRADE_NO`; // 오래된 순
 
@@ -976,6 +966,7 @@ router.get('/getUserNo/:goods_no', function (request, response, next) {
     })
 })
 
+//관리자 페이지 리스트 페이징 라우터
 router.get('/allGoodsPage/:keyword/:sort/:num', function (request, response, next) {
     var keyword = '';
     if(request.params.keyword != 'none') {
@@ -996,6 +987,7 @@ router.get('/allGoodsPage/:keyword/:sort/:num', function (request, response, nex
     })
 })
 
+// 관리자 페이지 검색 라우터
 router.get('/allGoods/:keyword', function (request, response, next) {
     var keyword = '';
     if(request.params.keyword != 'none') {
@@ -1012,6 +1004,7 @@ router.get('/allGoods/:keyword', function (request, response, next) {
     })
 })
 
+// 관리자 페이지 상품 삭제 후 복구 라우터
 router.post('/restoreGoods/:goods_no', function (request, response, next) {
     const goods_no = request.params.goods_no;
     try{
@@ -1042,6 +1035,7 @@ router.get('/orderInfo/:orderno', function (request, response, next) {
     });
 });
 
+// 마이페이지 메인 리뷰쓴 상품 4개씩 가져오는 라우터
 router.get('/reviewCount/:goods_no/:user_no', function (request, response, next) {
     const goods_no = request.params.goods_no;
     const user_no = request.params.user_no;
@@ -1055,6 +1049,7 @@ router.get('/reviewCount/:goods_no/:user_no', function (request, response, next)
     })
 })
 
+// 마이페이지 판매리스트 페이징을 위한 상품수 카운트
 router.get('/getReviewCount/:goods_no/:user_no', function (request, response, next) {
     const goods_no = request.params.goods_no;
     const user_no = request.params.user_no;
@@ -1068,6 +1063,7 @@ router.get('/getReviewCount/:goods_no/:user_no', function (request, response, ne
     })
 })
 
+// 마이페이지 입찰 상품 리스트 개수
 router.get('/orderCount/:goods_no/:user_no', function (request, response, next) {
     const goods_no = request.params.goods_no;
     const user_no = request.params.user_no;
@@ -1081,6 +1077,7 @@ router.get('/orderCount/:goods_no/:user_no', function (request, response, next) 
     })
 })
 
+// 마이페이지 찜 상품 리스트 개수
 router.get('/likeCounts/:goods_no' , function (request, response, next) {
     const goods_no = request.params.goods_no;
 
@@ -1093,6 +1090,7 @@ router.get('/likeCounts/:goods_no' , function (request, response, next) {
     })
 })
 
+// 해당 판매자가 해당 상품의 리뷰 작성할수 있는 권한 체크
 router.get('/sale_review_check/:goods_no/:user_no', function (request, response, next) {
     const goods_no = request.params.goods_no;
     const user_no = request.params.user_no;
@@ -1127,6 +1125,7 @@ router.get('/sale_review_check/:goods_no/:user_no', function (request, response,
     })
 })
 
+// 해당 구매자가 해당 상품의 리뷰 작성할수 있는 권한 체크
 router.get('/review_check/:goods_no/:user_no', function (request, response, next) {
     const goods_no = request.params.goods_no;
     const user_no = request.params.user_no;
@@ -1161,6 +1160,7 @@ router.get('/review_check/:goods_no/:user_no', function (request, response, next
     })
 })
 
+// 마이페이지 판매상품 탭 확인시 알람 삭제
 router.post('/auction_delete_alram/:user_no', function (request, response, next) {
     const user_no = request.params.user_no;
 

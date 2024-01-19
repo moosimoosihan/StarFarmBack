@@ -265,12 +265,14 @@ router.post('/join_process', function (request, response) {
 router.post('/login_process', function (request, response) {
     const loginUser = request.body;
 
+    // db에서 아이디가  있는지 확인
     db.query(sql.id_check, [loginUser.user_id], function (error, results, fields) {
         if (results.length <= 0) {
             return response.status(200).json({
                 message: 'undefined_id'
             })
         } else {
+            //  db에서  정지되어 있는 유저인지 확인
             db.query(sql.ban_check, [loginUser.user_id], function (error, results, fields) {
                 if (results[0].user_ban == 1) {
                     // 정지된 회원
@@ -391,7 +393,7 @@ router.get('/admin/report', function (request, response, next){
     });
 });             
 
-// 아이디 찾기 230711
+// 아이디 찾기
 router.post('/findId', function (request, response, next) {
     const user_email = request.body.user_email;
 
@@ -414,21 +416,7 @@ router.post('/findId', function (request, response, next) {
     });
 });
 
-// 랜덤 비밀번호 설정 코드 (사용 안함)
-function generateTempPassword() {
-    const length = 8; // 임시 비밀번호의 길이
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let tempPassword = '';
-
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        tempPassword += characters[randomIndex];
-    }
-
-    return tempPassword;
-}
-
-// 비번 찾기 230711
+// 비번 찾기
 router.post('/find_pass', function (request, response, next) {
     const user_id = request.body.user_id;
     const user_email = request.body.user_email;
