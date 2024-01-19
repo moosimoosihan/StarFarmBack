@@ -49,14 +49,14 @@ router.post('/send', function(request, response) {
 
     // 만약 상대방이 채팅방을 나갔을 경우 채팅을 보냈다면 다시 채팅방에 들어오게 만들기
     db.query(sql.get_room, [chat_room_no], function(error, results, fields){
-        if(results[0].CHATROOM_USER1!==user_no && results[0].CHATROOM_OUT1===1) {
+        if(results[0].CHATROOM_USER1!=user_no && results[0].CHATROOM_OUT1==1) {
             db.query(sql.chat_room_in1, [chat_room_no], function(error, result, fields){
                 if(error){
                     console.log(error);
                     response.status(500).send('Internal Server Error');
                 }
             })
-        } else if(results[0].CHATROOM_USER2!==user_no && results[0].CHATROOM_OUT2===1) {
+        } else if(results[0].CHATROOM_USER2!=user_no && results[0].CHATROOM_OUT2==1) {
             db.query(sql.chat_room_in2, [chat_room_no], function(error, result, fields){
                 if(error){
                     console.log(error);
@@ -64,6 +64,15 @@ router.post('/send', function(request, response) {
                 }
             })
         }
+        // 알람을 보낼 상대 유저 번호 가져오기
+        var other_user_no = results[0].CHATROOM_USER1 != user_no ? results[0].CHATROOM_USER1 : results[0].CHATROOM_USER2;
+        // 알람 보내기
+        db.query(sql.add_alram, [0, other_user_no], function(error, results, fields){
+            if(error){
+                console.log(error);
+                response.status(500).send('Internal Server Error');
+            }
+        })
     })
 
     db.query(sql.send_chat, [chat_room_no, user_no, content], function(error, result, fields){
@@ -128,6 +137,19 @@ router.post('/outChatRoom', function(request, response) {
                     response.status(500).send('Internal Server Error');
                 }
             })
+        }
+        response.status(200).json({message:'success'})
+    })
+})
+
+// 알람 지우기
+router.post('/chat_delete_alram/:user_no', function(request, response) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.chat_delete_alram, [user_no], function(error, result, fields){
+        if(error){
+            console.log(error);
+            response.status(500).send('Internal Server Error');
         }
         response.status(200).json({message:'success'})
     })

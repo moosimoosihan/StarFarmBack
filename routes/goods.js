@@ -422,18 +422,24 @@ router.post('/goodsBidding/:id', function (request, response) {
     const goods = request.body;
 
     // 상품 상태가 0이 아닌 경우 입찰 불가
-    db.query(sql.get_goods_info, [goods.goods_no], function (error, results, fields) {
+    db.query(sql.get_goods_info, [goods.goods_no], function (error, results1, fields) {
         if (error) {
             console.error(error);
             return response.status(500).json({ error: '상품 상태 에러' });
         }
-        if (results[0].goods_state == 0) {
+        if (results1[0].goods_state == 0) {
             db.query(sql.goods_bidding, [goods.bid_amount, goods.goods_no, goods.user_no], function (error, results, fields) {
                 if (error) {
                     console.error(error);
                     return response.status(500).json({ error: '상품 입찰 에러' });
                 }
                 else {
+                    db.query(sql.add_alram, [1, results1[0].user_no], function(error, results, fields){
+                        if(error){
+                            console.log(error);
+                            response.status(500).send('Internal Server Error');
+                        }
+                    })
                     return response.status(200).json({
                         message: 'bidding_complete'
                     })
@@ -1152,6 +1158,20 @@ router.get('/review_check/:goods_no/:user_no', function (request, response, next
                 message: 'review_no'
             })
         }
+    })
+})
+
+router.post('/auction_delete_alram/:user_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.auction_delete_alram, [user_no], function (error, results, fields) {
+        if(error) {
+            console.error(error);
+            return response.status(500).json({ error: 'error' });
+        }
+        return response.status(200).json({
+            message: 'delete_complete'
+        })
     })
 })
 
