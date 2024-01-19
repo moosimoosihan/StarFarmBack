@@ -618,4 +618,29 @@ router.get('/check_alram/:user_no', function (request, response, next) {
     });
 })
 
+
+// 총 유저 및 상품 수 불러오기
+router.get('/admin/totalcount', function (request, response, next) {
+    db.query(sql.totalUsercount, function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '총 유저 및 상품 수 불러오기 에러' });
+        }
+        db.query(sql.totalGoodsCount, function (error, results2, fields) {
+            if (error) {
+                console.error(error);
+                return response.status(500).json({ error: '총 유저 및 상품 수 불러오기 에러' });
+            }
+            response.status(200).json({
+                totalUsercount: results[0].count,
+                totalGoodsCount: results2[0].count
+            });
+        })
+    })
+})
+
+// 카테고리마다 상품 팔린 갯수 평균
+
+// 상품 낙찰가 평균
+
 module.exports = router;

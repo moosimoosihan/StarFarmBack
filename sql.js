@@ -34,7 +34,11 @@ module.exports = {
   delete_user: `DELETE FROM tb_user WHERE user_id = ?`,
   userlist: `SELECT USER_NO, USER_ID, USER_NICK, USER_EMAIL, USER_BAN, USER_CREATE_DT FROM tb_user WHERE user_tp = 0`,
   allUsersPage : `SELECT count(*) as count FROM tb_user WHERE user_tp = 0`,
+  totalUsercount : `SELECT count(*) as count FROM tb_user WHERE user_tp = 0`,
+  totalGoodsCount : `SELECT count(*) as count FROM tb_goods WHERE delete_time is null`,
+//select count(goods_no) as sell_count from tb_goods where GOODS_CATEGORY = ? and GOODS_CATEGORY_DETAIL = ? and GOODS_STATE = 2 and DELETE_TIME is null;
 
+//select avg(GOODS_SUCC_PRICE) as avg_price from tb_goods where GOODS_CATEGORY = ? and GOODS_CATEGORY_DETAIL = ? and GOODS_STATE = 2 and DELETE_TIME is null;
   // goods
   goods_add: `INSERT INTO tb_goods (goods_category, goods_category_detail, goods_nm, goods_content, goods_start_price, goods_trade, goods_deliv_price, goods_timer, user_no) VALUES (?,?,?,?,?,?,?,?,?)`,
   add_image: `UPDATE tb_goods SET goods_img = ? WHERE goods_no = ?`,
