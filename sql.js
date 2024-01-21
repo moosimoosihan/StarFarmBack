@@ -316,10 +316,15 @@ get_user_review: `SELECT r.review_no, r.review_con, r.user_no, r.review_score, r
   sale_review_check3 : `SELECT * FROM tb_review WHERE goods_no = ? and sell_user_no = ?`,
 
   // 알람 추가
-  add_alram : `INSERT INTO TB_ALRAM(ALRAM_COUNT, USER_NO) VALUE(?,?)`,
+  chat_add_alram : `INSERT INTO TB_ALRAM(ALRAM_COUNT, USER_NO, SELECT_NUM) VALUE(0,?,?)`,
+  auction_add_alram : `INSERT INTO TB_ALRAM(ALRAM_COUNT, USER_NO, SELECT_NUM) VALUE(1,?,?)`,
 
-  chat_delete_alram : `DELETE FROM TB_ALRAM WHERE ALRAM_COUNT = 0 AND USER_NO = ?`,
-  auction_delete_alram : `DELETE FROM TB_ALRAM WHERE ALRAM_COUNT = 1 AND USER_NO = ?`,
+  chat_delete_alram : `DELETE FROM TB_ALRAM WHERE ALRAM_COUNT = 0 AND USER_NO = ? AND SELECT_NUM = ?`,
+  auction_delete_alram : `DELETE FROM TB_ALRAM WHERE ALRAM_COUNT = 1 AND USER_NO = ? AND SELECT_NUM = ?`,
 
-  check_alram : `SELECT COUNT(ALRAM_COUNT) as count FROM TB_ALRAM WHERE USER_NO = ?`
+  chat_check_alram : `SELECT COUNT(*) as count FROM TB_ALRAM WHERE USER_NO = ? AND SELECT_NUM = ? AND ALRAM_COUNT = 0`,
+  auction_check_alram : `SELECT COUNT(*) as count FROM TB_ALRAM WHERE USER_NO = ? AND SELECT_NUM = ? AND ALRAM_COUNT = 1`,
+  check_alram : `SELECT COUNT(*) as count FROM TB_ALRAM WHERE USER_NO = ?`,
+  all_auction_alram: `SELECT COUNT(*) as count FROM TB_ALRAM WHERE USER_NO = ? AND ALRAM_COUNT = 1`,
+  all_chat_alram: `SELECT COUNT(*) as count FROM TB_ALRAM WHERE USER_NO = ? AND ALRAM_COUNT = 0`,
 }

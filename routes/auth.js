@@ -617,7 +617,33 @@ router.get('/check_alram/:user_no', function (request, response, next) {
         response.json(results);
     });
 })
+// 상품별 알람 가져오기
+router.get('/auction_check_alram/:user_no/:goods_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+    const goods_no = request.params.goods_no;
 
+    db.query(sql.auction_check_alram, [user_no, goods_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '알람지우기에러' });
+        }
+        response.json(results);
+    });
+})
+
+// 채팅방별 알람 가져오기
+router.get('/chat_check_alram/:user_no/:chat_room_no', function (request, response, next) {
+    const user_no = request.params.user_no;
+    const chat_room_no = request.params.chat_room_no;
+
+    db.query(sql.chat_check_alram, [user_no, chat_room_no], function (error, results, fields) {
+        if (error) {
+            console.error(error);
+            return response.status(500).json({ error: '알람가져오기에러' });
+        }
+        response.json(results);
+    });
+})
 
 // 총 유저 및 상품 수 불러오기
 router.get('/admin/totalcount', function (request, response, next) {

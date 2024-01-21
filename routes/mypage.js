@@ -696,4 +696,30 @@ router.get('/orderlistCount/:user_no/', function(request, response) {
     })
 })
 
+// 모든 경매 알림 가져오기
+router.get('/getAuctionAlram/:user_no', function(request, response) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.all_auction_alram, [user_no], function(error, result, fields){
+        if(error){
+            console.log(error);
+            response.status(500).send('Internal Server Error');
+        }
+        response.status(200).send(result);
+    })
+})
+
+// 모든 채팅 알림 가져오기
+router.get('/getChatAlram/:user_no', function(request, response) {
+    const user_no = request.params.user_no;
+
+    db.query(sql.all_chat_alram, [user_no], function(error, result, fields){
+        if(error){
+            console.log(error);
+            response.status(500).send('Internal Server Error');
+        }
+        response.status(200).send(result);
+    })
+})
+
 module.exports = router;

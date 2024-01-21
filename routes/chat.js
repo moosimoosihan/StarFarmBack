@@ -70,7 +70,7 @@ router.post('/send', function(request, response) {
         // 알람을 보낼 상대 유저 번호 가져오기
         var other_user_no = results[0].CHATROOM_USER1 != user_no ? results[0].CHATROOM_USER1 : results[0].CHATROOM_USER2;
         // 알람 보내기
-        db.query(sql.add_alram, [0, other_user_no], function(error, results, fields){
+        db.query(sql.chat_add_alram, [other_user_no, chat_room_no], function(error, results, fields){
             if(error){
                 console.log(error);
                 response.status(500).send('Internal Server Error');
@@ -146,10 +146,11 @@ router.post('/outChatRoom', function(request, response) {
 })
 
 // 알람 지우기
-router.post('/chat_delete_alram/:user_no', function(request, response) {
-    const user_no = request.params.user_no;
+router.post('/chat_delete_alram', function(request, response) {
+    const user_no = request.body.user_no;
+    const chat_room_num = request.body.chat_room_num;
 
-    db.query(sql.chat_delete_alram, [user_no], function(error, result, fields){
+    db.query(sql.chat_delete_alram, [user_no, chat_room_num], function(error, result, fields){
         if(error){
             console.log(error);
             response.status(500).send('Internal Server Error');
